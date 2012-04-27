@@ -1,0 +1,2 @@
+In file included from /Programming/of7_osx/apps/LED/lightSequencer/src/bitmapMixer.cpp:10:
+/Programming/of7_osx/apps/LED/lightSequencer/src/bitmapMixer.h:14:22: error: ofxImage.h: No such file or directory

@@ -1,0 +1,2 @@
+In file included from /Programming/of7_osx/apps/LED/lightSequencer/src/LEDS.cpp:1:
+/Programming/of7_osx/apps/LED/lightSequencer/src/LEDS.h:7:22: error: ofxImage.h: No such file or directory

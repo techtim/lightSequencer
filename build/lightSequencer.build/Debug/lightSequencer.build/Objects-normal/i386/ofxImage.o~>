@@ -1,0 +1,36 @@
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:1:25: error: colorPicker.h: No such file or directory
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:3: error: 'colorPicker' has not been declared
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:3: error: ISO C++ forbids declaration of 'colorPicker' with no type
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: In function 'int colorPicker()':
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:5: error: 'width' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:6: error: 'height' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:8: error: 'xPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:9: error: 'yPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:11: error: 'colorPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:12: error: 'triWidth' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: At global scope:
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:15: error: 'colorPicker' is not a class or namespace
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: In function 'void setPosition(int, int)':
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:16: error: 'xPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:17: error: 'yPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: At global scope:
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:20: error: 'colorPicker' is not a class or namespace
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: In function 'bool isClicked(int, int)':
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:21: error: 'yPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:21: error: 'height' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:21: error: 'xPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:21: error: 'width' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:23: error: 'colorPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:23: error: 'getClickedX' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:24: error: 'color' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:24: error: 'HsvToRgb' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: At global scope:
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:31: error: 'colorPicker' is not a class or namespace
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: In function 'int getClickedX(int, int)':
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:32: error: 'xPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: At global scope:
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:35: error: 'colorPicker' is not a class or namespace
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: In function 'int getClickedY(int, int)':
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:36: error: 'yPos' was not declared in this scope
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp: At global scope:
+/Programming/of7_osx/apps/LED/lightSequencer/src/ofxImage.cpp:40: error: 'ofColor' does not name a type
