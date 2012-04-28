@@ -189,7 +189,8 @@ bool ledPresets::saveXML() {
                 printf("strmat = %s\n", strmat.c_str());
                 TMP.setValue("GENERATOR:bitmap", strmat, lastTagNumber);
 //                TMP.setValue(
-                string strseq((char *) presets[i].generators[j].sequence, 16*3);
+                string strseq = hexString(presets[i].generators[j].sequence, 16*3);
+                printf("\nSEQ = ");
                 for (int z=0; z<16*3; z++) printf("%02X", presets[i].generators[j].sequence[i]);
                 printf("\nstrseq = %s\n", strseq.c_str());
                 TMP.setValue("GENERATOR:seq", strseq, lastTagNumber);

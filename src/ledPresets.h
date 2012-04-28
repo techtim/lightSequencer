@@ -64,5 +64,18 @@ class ledPresets : public LEDS {
             xmlGenerator generators[4];
             bool is_active;
         } * presets;
+    
+        string hexString( unsigned char * byte, unsigned char n)
+        {
+            char lookup[] = "0123456789abcdef";
+            string s = "";
+            
+            for( int i = 0; i < n; i++ ) {
+                s += lookup[ byte[i] >> 4 ];
+                s += lookup[ byte[i] & 0x0f ];
+            }
+            
+            return s;
+        }
 };
 #endif
