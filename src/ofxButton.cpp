@@ -124,12 +124,13 @@ void ofxButton::draw() {
 	glPopMatrix();
 }
 
-void ofxButton::setupMidi(unsigned int ident, unsigned int channel, unsigned int port) {
+void ofxButton::setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort){ 
     midiChannel = channel;
 	midiId = ident;
-    if (port != 100) { // do not turn on trick
-        midiIn.openPort(port);
-        midiOut.openPort(port);
+    midiInPort = inPort, midiOutPort = outPort;
+    if (midiInPort != 100) { // do not turn on trick
+        midiIn.openPort(midiInPort);
+        if (midiOutPort != 100) midiOut.openPort(midiOutPort);
         ofAddListener(midiIn.newMessageEvent, this, &ofxButton::receiveMidi);
     }
 }

@@ -27,18 +27,17 @@ public:
     unsigned int width, height, length, columns, rows;
     unsigned char * bitmap;
     bool setupFinished, isOn;
-    ofxButton invertButton, mirrorButton;
+    ofxButton invertButton, mirrorButton, moveLeftButton, moveRightButton;
 
     ofColor tmpColor;
     bool tmpSelected;
     
     void invert() {
         if (!setupFinished || !invertButton.isOn) return;
-        printf("IVERT");
-        for (int i=0; i<length-1; i++) {
+//        printf("IVERT");
+        for (int i=0; i<length; i++) {
             leds[i].color = leds[i].color.getHex() == 0 ? color : tmpColor.black;
-            leds[i].isSelected != leds[i].isSelected;
-            printf("COLOR:%X, SELECT: %i \n", leds[i].color.getHex(), (leds[i].isSelected?1:0) );
+            leds[i].isSelected = !leds[i].isSelected;
         }
     }
     
@@ -51,10 +50,28 @@ public:
             leds[i].color = leds[length-i-1].color;
             leds[length-i-1].color = tmpColor;
             leds[length-i-1].isSelected = tmpSelected;
-            printf("COLOR:%X, SELECT: %i \n", leds[i].color.getHex(), (leds[i].isSelected?1:0) );
+//            printf("COLOR:%X, SELECT: %i \n", leds[i].color.getHex(), (leds[i].isSelected?1:0) );
 //            }
         }
     }
+    
+    void moveLeft() {
+        if (!setupFinished || !moveLeftButton.isOn) return;
+        //        printf("IVERT");
+        for (int i=0; i<length; i++) {
+            leds[i].color = leds[i].color.getHex() == 0 ? color : tmpColor.black;
+            leds[i].isSelected = !leds[i].isSelected;
+        }
+    }
+    void moveRight() {
+        if (!setupFinished || !moveRightButton.isOn) return;
+        //        printf("IVERT");
+        for (int i=0; i<length; i++) {
+            leds[i].color = leds[i].color.getHex() == 0 ? color : tmpColor.black;
+            leds[i].isSelected = !leds[i].isSelected;
+        }
+    }
+
 
 };
 

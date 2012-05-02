@@ -27,9 +27,9 @@ void FX::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int he
 
     LEDS::set(columns, rows, 1, xLeft, yLeft, 1, true);
 
-    invertButton.setup(xLeft+10, yLeft+10, 50, 20, true);
+    invertButton.setup(xLeft+20, yLeft, 80, 20, true);
     invertButton.setActictiveText("invert");
-    mirrorButton.setup(xLeft+70, yLeft+10, 50, 20, true);
+    mirrorButton.setup(xLeft+110, yLeft, 80, 20, true);
     mirrorButton.setActictiveText("mirror");
 
     setupFinished = true;

@@ -25,9 +25,7 @@ ledSequencer::~ledSequencer()
 void ledSequencer::Create(
 	unsigned int stepsCnt, unsigned int x, unsigned int y, 
 	unsigned int cell, unsigned int spac, unsigned int seqBitLen,
-	ofColor selColor, ofColor actColor, ofColor inactColor, 
-    unsigned int channel, unsigned int port
-)
+	ofColor selColor, ofColor actColor, ofColor inactColor)
 {
 //	set(int col, int row, int cell, int x, int y, int spac);
 	steps = stepsCnt;
@@ -42,42 +40,49 @@ void ledSequencer::Create(
 	
 	ADSRoffset = 0;
 	ADSRvalue = 0;
-    //---MIDI---
-	midiChannel = channel;
-	midiPort = port;
     
-    midiIn.openPort(midiPort); // opens a connection with the device at port 0 (default)
-    midiOut.openPort(midiPort);
-    ofAddListener(midiIn.newMessageEvent, this, &ledSequencer::newMessage);
-    
-    midiActive = false;
-    midiSeqStartCC = 10;
-
 	//---Controll---
 	int slidersLen = 255;
 	int slidersOffset = y+2*(cellSize+mSpace);
 	sliders = new ofxSlider [3];
     
     sliders[0].setup(x+(cell+spac)*2, slidersOffset, slidersLen, 15, true, 0, 255, true);
-	sliders[0].setupMidi(100, midiChannel, 100); // set wrong port to controll from active sequencer not global midi
+	
 	sliders[0].setActictiveText("ATT");
 	sliders[1].setup(x+(cell+spac)*2, slidersOffset+20, slidersLen, 15, true, 0, 255, true);
 	sliders[1].setActictiveText("DEC");
-	sliders[1].setupMidi(101, midiChannel, 100);
 	sliders[2].setup(x+(cell+spac)*2, slidersOffset+40, slidersLen, 15, true, 0, 255, true);
 	sliders[2].setActictiveText("REL");
-	sliders[2].setupMidi(102, midiChannel, 100);
 	setADSR(0.0f,0.0f,0.0f);
 	
 	//--Speed
 	button8.setup(x, y, cell, cell, true);
-    button8.setupMidi(30, 1, midiPort);
 	button8.setActictiveText("1/8");
 	button16.setup(x, y+cell+spac, cell, cell, true);
-    button16.setupMidi(31, 1, midiPort);
 	button16.setActictiveText("1/16");
 	button16.isOn = true;
 	setQuant16();
+}
+
+void ledSequencer::setupMidi(unsigned int midiSeqStart, unsigned int channel, unsigned int inPort, unsigned int outPort) {
+    //---MIDI---
+	midiChannel = channel;
+	midiInPort = inPort;
+    midiOutPort = outPort;
+    
+    midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+    midiOut.openPort(midiOutPort);
+    ofAddListener(midiIn.newMessageEvent, this, &ledSequencer::newMessage);
+    
+    midiActive = false;
+    midiSeqStartCC = midiSeqStart;
+
+    sliders[0].setupMidi(100, midiChannel, 100); // set wrong port to controll from active sequencer not global midi
+    sliders[1].setupMidi(101, midiChannel, 100);
+	sliders[2].setupMidi(102, midiChannel, 100);
+
+    button8.setupMidi(30, 1, midiInPort, midiOutPort);
+    button16.setupMidi(31, 1, midiInPort, midiOutPort);
 }
 
 bool ledSequencer::isClicked(int x, int y, bool dragged)
@@ -221,7 +226,7 @@ void ledSequencer::newMessage(ofxMidiEventArgs &args){
 	if (midiActivationCC == args.byteOne && args.byteTwo == 127 && args.channel == midiChannel) midiActive = !midiActive;
     
     if (midiActive) {
-        for (int i=0; i<3; i++) sliders[i].receiveMidi(args); // send command right to slider
+//        for (int i=0; i<3; i++) sliders[i].receiveMidi(args); // send command right to slider
         button8.setMidiActive(true);
         button16.setMidiActive(true);
         if (button8.midiId == args.byteOne) setQuant8();

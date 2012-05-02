@@ -14,9 +14,7 @@ class ledSequencer : public LEDS {
 		~ledSequencer();
 		void Create(unsigned int steps, unsigned int x, unsigned int y, 
 					unsigned int cell, unsigned int spac, unsigned int seqBitLen,
-					ofColor selColor, ofColor actColor, ofColor inactColor, 
-                    unsigned int midiChannel=1, unsigned int midiPort = 0
-		);
+					ofColor selColor, ofColor actColor, ofColor inactColor);
 		bool isClicked(int x, int y, bool dragged = false);
 		bool isSelectedStep(int step);
 		void setStep(int step, ofColor * feedBitmap);
@@ -70,12 +68,13 @@ class ledSequencer : public LEDS {
 		ofColor selectColor;
 	
 		//---MIDI---
+        void setupMidi(unsigned int midiSeqStart, unsigned int channel, unsigned int InPort, unsigned int OutPort);
 		void newMessage(ofxMidiEventArgs &args);
 		ofxMidiIn	midiIn;
 		ofxMidiOut	midiOut;
+        unsigned int midiInPort, midiOutPort;
 		unsigned int midiChannel; // channel for exact sequence , setuped 
 		unsigned int midiId;
-        unsigned int midiPort;
 		unsigned int midiValue;
         
         unsigned int midiActivationCC;

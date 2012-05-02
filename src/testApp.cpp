@@ -24,29 +24,30 @@ void testApp::setup(){
 	midiIn.listPorts();
     midiOut.listPorts();
     
-    midiPort = midiIn.getPortByName("nanoKONTROL2");
-	if (midiPort != 100) {
-        midiIn.openPort(midiPort); // opens a connection with the device at port 0 (default)
-        midiOut.openPort(midiPort);
+    midiInPort = midiIn.getPortByName("nanoKONTROL2");
+    midiOutPort = midiOut.getPortByName("nanoKONTROL2");
+	if (midiInPort != 100 && midiOutPort != 100) {
+        midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+        midiOut.openPort(midiOutPort);
     }
-    printf("OPENED PORT: %i", midiPort);
-    if (midiPort != 100) ofAddListener(midiIn.newMessageEvent, this, &testApp::newMessage);
+    printf("\nOPENED PORT -> in: %i -> out: %i \n", midiInPort, midiOutPort);
+    if (midiInPort != 100) ofAddListener(midiIn.newMessageEvent, this, &testApp::newMessage);
 
     //---Buttons---
 	Play.setup(winWidth/2 - 50, 0, 100, 30, true);
 	Play.setActictiveText("PLAY");
     Play.setInactictiveText("STOP");
     Play.setFontSize(14);
-    Play.setupMidi(41, 1, midiPort);
+    Play.setupMidi(41, 1, midiInPort, midiOutPort);
     Play.setMidiActive(true);
     
     Start.setup(winWidth/2 - 25, 40, 50, 30, false);
     Start.setActictiveText("start");
     Start.setFontSize(12);
-    Start.setupMidi(43, 1, midiPort);
+    Start.setupMidi(43, 1, midiInPort, midiOutPort);
 //    Start.setMidiActive(true);
-    ArdButton.setup(winWidth/2 - 75, 60, 50, 30, true);
-    ArdButton.setActictiveText("Arduino");
+    ArdButton.setup(winWidth/2 - 95, 60, 50, 30, true);
+    ArdButton.setActictiveText("Serial");
     ArdButton.setFontSize(12);
     TcpButton.setup(winWidth/2 + 40, 60, 50, 30, true);
     TcpButton.setActictiveText("TCP");
@@ -102,7 +103,7 @@ void testApp::setup(){
         mixerRegion.leftX, mixerRegion.leftY + 100,
         mixerRegion.rightX - mixerRegion.leftX, mixerRegion.rightY - mixerRegion.leftY -400
     );
-    bpmCtrl.setupMidi(0, 1, midiPort);
+    bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
 //########################
     //---LED
 	Arduino.setup("/dev/tty.usbmodem411", 19200);
@@ -159,6 +160,7 @@ void testApp::setup(){
     float seqPixelWidth = maxSteps/2 * (seqCellSize + seqCellSpace) + seqCellSize; // one more cell for quantisation
     
     midiSeqActivationStartCC = 34;
+    midiSeqBeginCC = 10;
     Sequence = new ledSequencer[controllersNum];
 	
 	Volume = new ofxSlider[controllersNum];
@@ -167,7 +169,7 @@ void testApp::setup(){
     for (int i=0; i<controllersNum; i++)
 	{
 		Gen[i].setup(region[i].leftX, region[i].leftY, controllersWidth, controllersHeight, matrixW, matrixH, (i>1?true:false), i);
-        Gen[i].setupMidi(midiPort, midiSeqActivationStartCC+i, midiLedMatrixActivationCC, midiHueControlCC+i);
+        Gen[i].setupMidi(midiInPort, midiOutPort, midiSeqActivationStartCC+i, midiSeqBeginCC, midiLedMatrixActivationCC, midiHueControlCC+i);
 //		colorSaturation[i].setup(region[i].leftX+matrixCellSize/2, region[i].leftY+10, matrixCellSize/2, 50, false, 0, 255);		
     }
 
@@ -176,14 +178,14 @@ void testApp::setup(){
 	Volume[2].setup(mixerRegion.leftX,  winHigh-controllersHeight+50, 20, 255, false, 0, 255);
 	Volume[3].setup(mixerRegion.rightX-10, winHigh-controllersHeight+50, 20, 255, false, 0, 255);
 
-    Volume[0].setupMidi(120, 1, midiPort, false);
-    Volume[1].setupMidi(121, 1, midiPort, false);
-    Volume[2].setupMidi(122, 1, midiPort, false);
-    Volume[3].setupMidi(123, 1, midiPort, false);
+    Volume[0].setupMidi(120, 1, midiInPort, false);
+    Volume[1].setupMidi(121, 1, midiInPort, false);
+    Volume[2].setupMidi(122, 1, midiInPort, false);
+    Volume[3].setupMidi(123, 1, midiInPort, false);
     
     mixerSaturation.setup(mixerRegion.leftX+(mixerRegion.rightX-mixerRegion.leftX)/2-255/2, mixerRegion.rightY/2 - 100, 255, 20, true, 0, 255);
 //    mixerSaturation.setActictiveText("SAT");
-    mixerSaturation.setupMidi(70, 1, midiPort, false);
+    mixerSaturation.setupMidi(70, 1, midiInPort, false);
 
 	ledControl.set(matrixW, matrixH, (mixerRegion.rightX-mixerRegion.leftX+60)/matrixW, mixerRegion.leftX - matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
 //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
@@ -193,7 +195,6 @@ void testApp::setup(){
     
     presetsNum = 32;
     Presets.setup(mixerRegion.leftX+30, mixerRegion.rightY-winHigh/3, mixerRegion.rightX-mixerRegion.leftX-60, winHigh/3, matrixW, matrixH, presetsNum);
-    Sequence[0].setMidiActive(true);
 
     setupFinished = true;
 }
@@ -293,6 +294,7 @@ void testApp::mouseDragged(int x, int y, int button){
 	{
 		Volume[i].isClicked(x, y);
 	}
+    mixerSaturation.isClicked(x, y);
 }
 
 //--------------------------------------------------------------
@@ -314,6 +316,7 @@ void testApp::mousePressed(int x, int y, int button){
     Play.isClicked(x,y);
     bpmCtrl.isClicked(x,y);
     ArdButton.isClicked(x,y);
+    mixerSaturation.isClicked(x, y);
     if (TcpButton.isClicked(x,y)) {
         if (!TCP.weConnected) TCP.setup();
     };
@@ -406,24 +409,28 @@ void testApp::newMessage(ofxMidiEventArgs &args){
     if (midiId >= midiSeqActivationStartCC && midiId < midiSeqActivationStartCC+controllersNum && midiValue == 127)
         for (int i = 0; i < controllersNum; i++) {
             if (midiId != midiSeqActivationStartCC + i) { 
-                Gen[i].Sequencer.setMidiActive(false), Gen[i].ledMatrix.setMidiActive(false); 
+//                Gen[i].Sequencer.setMidiActive(false), Gen[i].ledMatrix.setMidiActive(false); 
+                Gen[i].setActive(false);
+            } else {
+                Gen[i].setActive(true);
             };
 //                midiOut.sendControlChange(midiPort, midiSeqActivationStartCC+i, 127);
+//            Gen[midiId-midiSeqActivationStartCC].setActive(true);
         }
 
     // If switch to control ledMatrixe, turn of midi on active Sequencer
-    if (midiId == midiLedMatrixActivationCC)
-        for (int i = 0; i < controllersNum; i++) {
-            if (midiValue == 127 && Gen[i].Sequencer.midiActive) {
-//                Sequence[i].midiActive ? ledMatrix[i].setMidiActive(true) : ledMatrix[i].setMidiActive(false);
-                Gen[i].ledMatrix.setMidiActive(true);
-                Gen[i].Sequencer.setMidiActive(false);
-            } else if (midiValue == 127 && Gen[i].ledMatrix.midiActive) {
-//                ledMatrix[i].midiActive ? Sequence[i].setMidiActive(true) : Sequence[i].setMidiActive(false);
-                Gen[i].Sequencer.setMidiActive(true);
-                Gen[i].ledMatrix.setMidiActive(false);
-            }
-        }
+//    if (midiId == midiLedMatrixActivationCC)
+//        for (int i = 0; i < controllersNum; i++) {
+//            if (midiValue == 127 && Gen[i].Sequencer.midiActive) {
+////                Sequence[i].midiActive ? ledMatrix[i].setMidiActive(true) : ledMatrix[i].setMidiActive(false);
+//                Gen[i].ledMatrix.setMidiActive(true);
+//                Gen[i].Sequencer.setMidiActive(false);
+//            } else if (midiValue == 127 && Gen[i].ledMatrix.midiActive) {
+////                ledMatrix[i].midiActive ? Sequence[i].setMidiActive(true) : Sequence[i].setMidiActive(false);
+//                Gen[i].Sequencer.setMidiActive(true);
+//                Gen[i].ledMatrix.setMidiActive(false);
+//            }
+//        }
 
     if (midiId == Start.midiId && midiValue == 127) quarterBeatCounter = 0, Play.receiveMidi(args);
 

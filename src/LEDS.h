@@ -34,7 +34,8 @@ class LEDS {
 	
         LED *leds; // array of LED class
         int ledLastClicked;
-    
+        
+        bool changedBitmap;
 		int columns;
         int rows;
         int cellSize;
@@ -50,11 +51,11 @@ class LEDS {
         unsigned char * matrixPixels;
 
         //---MIDI
-        void setupMidi(unsigned int ident, unsigned int channel = 1, unsigned int port = 0);
+        void setupMidi(unsigned int ident, unsigned int channel,  unsigned int inPort, unsigned int outPort);
         void receiveMidi(ofxMidiEventArgs &args);
         ofxMidiIn midiIn;
         ofxMidiOut midiOut;
-
+        unsigned int midiInPort, midiOutPort;
         unsigned int midiChannel, midiId, midiValue; // channel for exact sequence , setuped 
 
         unsigned int midiActivationCC;

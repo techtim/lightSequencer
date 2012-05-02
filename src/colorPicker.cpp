@@ -2,14 +2,16 @@
 
 colorPicker::colorPicker(){
 
-        width                  = 0;
-        height                 = 0;
+        width    = 0;
+        height   = 0;
 
-        xPos                            = 0;
-        yPos                            = 0;
+        xPos     = 0;
+        yPos     = 0;
 		
-		colorPos						= 0;
-		triWidth						= 40;
+		colorPos = 0;
+		triWidth = 40;
+        psyPos   = 0;
+        evenCounter = 0;
 }
 
 void colorPicker::loadImage(string path){
@@ -21,12 +23,15 @@ void colorPicker::loadImage(string path){
 void colorPicker::setPosition(int x, int y){
     xPos = x;
     yPos = y;
+    psyButton.setup(xPos-30, yPos, 30, 30, true);
+    psyButton.setActictiveText("psy");
 }
 
 bool colorPicker::isClicked(int x, int y) {
+    psyButton.isClicked(x, y);
     if (y >= yPos && y <= (yPos + height) && x >= xPos && x <= xPos + (width))
 	{ 
-		colorPos = getClickedX(x, y);
+        colorPos = getClickedX(x, y);
 		color = HsvToRgb(colorPos, 255, 255);
 		return true;
 	}
@@ -45,6 +50,17 @@ int colorPicker::getClickedY(int x, int y) {
 void colorPicker::draw()
 {
 	img.draw(xPos, yPos);
+    psyButton.draw();
+    if (psyButton.isOn) {
+        if (evenCounter == 0) psyPos+=60;
+        evenCounter = evenCounter ? 0 : 1;
+        colorPos = psyPos;
+        if (psyPos >= 360) psyPos = 1;
+        color = HsvToRgb(psyPos, 255, 255);
+    } else {
+        color = HsvToRgb(colorPos, 255, 255);
+    }
+
 	ofSetHexColor(color.getHex());
 	ofTriangle(xPos+colorPos, yPos+img.height, 
 			   xPos+colorPos-triWidth/2, yPos+img.height+20, 

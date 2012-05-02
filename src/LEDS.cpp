@@ -37,8 +37,10 @@ void LEDS::set(int col, int row, int cell, int x, int y, int spac, bool setAllWh
 
     midiActive = false;
     midiSeqStartCC = 10;
-    
-	setPosition();
+
+    changedBitmap = false;
+
+    setPosition();
 };
 
 void LEDS::setPosition()
@@ -76,7 +78,7 @@ void LEDS::parseBitmap(unsigned char * pixels)
         }
         count++;
 	}
-
+    changedBitmap = true;
     printf("\n \n \n");
 };
 
@@ -90,7 +92,7 @@ void LEDS::parseBitmap(ofColor * pixels)
         count++;
 		//printf("%i PIXEL: %i , %i , %i - XLeft = %i , YLeft = %i \n", count, pixels[i], pixels[i+1], pixels[i+2]);
 	}
-	
+	changedBitmap = true;
     //printf("\n \n \n \n");
 };
 
@@ -102,6 +104,7 @@ void LEDS::parseBitmap()
 	{
 		leds[count++].color.set(matrixPixels[i], matrixPixels[i+1], matrixPixels[i+2]);
 	}
+    changedBitmap = true;
 }
 
 void LEDS::print()
@@ -167,6 +170,7 @@ void LEDS::setClicked(int x, int y, ofColor newColor)
 		{
 			leds[i].color = newColor;
             ledLastClicked = i;
+            changedBitmap = true;
             break;
 		}
 }
@@ -177,6 +181,7 @@ int LEDS::numClicked(int x, int y, ofColor newColor)
 		if (leds[i].isClicked(x, y)) 
 		{
 			leds[i].color = newColor;
+            changedBitmap = true;
 //            ledLastClicked = i;
             return i;
 		}
@@ -211,7 +216,6 @@ void LEDS::updateColor(ofColor newColor, ofColor inactColor)
 		else {
 			leds[i].color = inactColor;
 		}
-
     }
 }
 
@@ -252,12 +256,13 @@ unsigned char * LEDS::getBitmapChar()
 	return bitmapChar;
 }
 
-void LEDS::setupMidi(unsigned int ident, unsigned int channel, unsigned int port) {
+void LEDS::setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort) {
     midiChannel = channel;
 	midiId = ident;
-    if (port != 100) { // do not turn on trick
-        midiIn.openPort(port);
-        midiOut.openPort(port);
+    midiInPort = inPort, midiOutPort = outPort;
+    if (midiInPort != 100) { // do not turn on trick
+        midiIn.openPort(midiInPort);
+        if (midiOutPort != 100) midiOut.openPort(midiOutPort);
         ofAddListener(midiIn.newMessageEvent, this, &LEDS::receiveMidi);
     }
 }
@@ -267,7 +272,9 @@ void LEDS::receiveMidi(ofxMidiEventArgs &args){
     
 	if (midiActive && args.channel == midiChannel &&
         args.byteOne >= midiSeqStartCC && 
-        args.byteOne<midiSeqStartCC+columns*rows && args.byteTwo == 127
-        )
+        args.byteOne<midiSeqStartCC+columns*rows && args.byteTwo == 127)
+    {
 		leds[args.byteOne-midiSeqStartCC].isSelected = (leds[args.byteOne-midiSeqStartCC].isSelected == true ? false : true);
+        changedBitmap = true;
+    }
 }

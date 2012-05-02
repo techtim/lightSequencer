@@ -66,16 +66,16 @@ bool bpmControl::isClicked(int x, int y){
     if (Reset.isClicked(x, y)) liveAudioAnalysis.clearVectors() ;
 }
 
-void bpmControl::setupMidi(unsigned int ident, unsigned int channel, unsigned int port){
+void bpmControl::setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort){ 
 	midiChannel = channel;
-
-    if (port != 100) {
-        midiIn.openPort(port);
-        midiOut.openPort(port);
+    midiInPort = inPort, midiOutPort = outPort;
+    if (midiInPort != 100) { // do not turn on trick
+        midiIn.openPort(midiInPort);
+        midiOut.openPort(midiOutPort);
         ofAddListener(midiIn.newMessageEvent, this, &bpmControl::receiveMidi);
-        Sync.setupMidi(midiSyncCC, 1, port);
+        Sync.setupMidi(midiSyncCC, 1, midiInPort, midiOutPort);
         Sync.setMidiActive(true);
-        Reset.setupMidi(midiResetCC, 1, port); 
+        Reset.setupMidi(midiResetCC, 1, midiInPort, midiOutPort); 
         Reset.setMidiActive(true);
     }
 }

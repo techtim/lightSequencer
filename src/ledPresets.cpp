@@ -153,6 +153,12 @@ bool ledPresets::loadXML() {
             presets[i].generators[j].dec = XML.getValue("dec", 0);
             presets[i].generators[j].rel = XML.getValue("rel", 0);
             presets[i].is_active = leds[i].isSelected = XML.getValue("isActive", 0) ? true : false;
+            if (presets[i].is_active) {
+                tmpStr = XML.getValue("bitmap", "");
+                stringHex(presets[i].generators[j].matrix, (char*)tmpStr.c_str(), tmpStr.length());
+                tmpStr = XML.getValue("seq", "");
+                stringHex(presets[i].generators[j].sequence, (char*)tmpStr.c_str(), tmpStr.length());
+            }
             if (leds[i].isSelected) leds[i].color = color.yellow;
             XML.popTag();
         }
@@ -185,14 +191,14 @@ bool ledPresets::saveXML() {
                 TMP.setValue("GENERATOR:rel", presets[i].generators[j].rel, lastTagNumber);
                 TMP.setValue("GENERATOR:quant", (int)presets[i].generators[j].quant, lastTagNumber);
                 TMP.setValue("GENERATOR:isActive", 1, lastTagNumber);
-                string strmat((char *) presets[i].generators[j].matrix, ledsW*ledsH*3);
-                printf("strmat = %s\n", strmat.c_str());
+                string strmat = hexString(presets[i].generators[j].matrix, ledsW*ledsH*3);
+//                printf("strmat = %s\n", strmat.c_str());
                 TMP.setValue("GENERATOR:bitmap", strmat, lastTagNumber);
 //                TMP.setValue(
                 string strseq = hexString(presets[i].generators[j].sequence, 16*3);
-                printf("\nSEQ = ");
-                for (int z=0; z<16*3; z++) printf("%02X", presets[i].generators[j].sequence[i]);
-                printf("\nstrseq = %s\n", strseq.c_str());
+//                printf("\nSEQ = ");
+//                for (int z=0; z<16*3; z++) printf("%02X", presets[i].generators[j].sequence[i]);
+//                printf("\nstrseq = %s\n", strseq.c_str());
                 TMP.setValue("GENERATOR:seq", strseq, lastTagNumber);
             } else {
                 TMP.setValue("GENERATOR:att", 0, lastTagNumber);

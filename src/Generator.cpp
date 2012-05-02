@@ -57,29 +57,37 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     
     effects.setup(leftX, ledMatrix.yRight, width, 40, matrixW, matrixH);
     
-    Sequencer.Create(maxSteps, leftX+(width-seqPixelWidth)/2, leftY+170, seqCellSize, seqCellSpace, matrixW*matrixH, selectColor, actColor, inactColor, 1, midiPort);
-    
+    Sequencer.Create(maxSteps, leftX+(width-seqPixelWidth)/2, leftY+170, seqCellSize, seqCellSpace, matrixW*matrixH, selectColor, actColor, inactColor);
+
+    matrixSequenceMode = false;
+
     leftY -= atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
 //    sequencedMatrix.set(matrixW, matrixH, matrixCellSize,
 //                           leftX+(width-matrixPixelWidth)/2, leftY+(atBottom ? -matrixH * matrixCellSize : height-matrixCellSize), matrixSpace, true);
     sequencedMatrix.set(matrixW, matrixH, matrixCellSize,
                         leftX+(width-matrixPixelWidth)/2, leftY+(atBottom ? 0 : height-(matrixCellSize+matrixSpace)*matrixH), matrixSpace, true);
     sequencedMatrix.setClickedAll();
-    
+    sequencedMatrix.setMidiActive(false);
     ofAddListener(ofEvents.mousePressed, this, &Generator::mousePressed);
     ofAddListener(ofEvents.mouseDragged, this, &Generator::mouseDragged);
 
 }
 
-void Generator::setupMidi(unsigned int midiPort, unsigned int seqActivCC, unsigned int ledMatrixActivCC, unsigned int hue ) {
-    midiIn.openPort(midiPort); // opens a connection with the device at port 0 (default)
-    midiOut.openPort(midiPort);
+void Generator::setupMidi(unsigned int inPort, unsigned int outPort, unsigned int seqActivCC, unsigned int seqBeginCC, unsigned int ledMatrixActivCC, unsigned int hue ) {
+    midiInPort = inPort;
+    midiOutPort = outPort;
+    midiSeqBeginCC = seqBeginCC;
+    midiHue = hue, midiSeqActivationStartCC = seqActivCC, midiLedMatrixActivationCC = ledMatrixActivCC;
+    midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+    midiOut.openPort(midiOutPort);
     ofAddListener(midiIn.newMessageEvent, this, &Generator::receiveMidi);
     
-    hueLine.setupMidi(midiHue, 1, midiPort);
-    ledMatrix.setupMidi(seqActivCC, 1, midiPort);
-    ledMatrix.setMidiActivationCC(ledMatrixActivCC);
-    Sequencer.setMidiActivationCC(seqActivCC);
+    hueLine.setupMidi(midiHue, 1, midiInPort);
+    ledMatrix.setupMidi(midiSeqBeginCC, 1, midiInPort, midiOutPort);
+    ledMatrix.setMidiActivationCC(midiLedMatrixActivationCC);
+    Sequencer.setupMidi(midiSeqBeginCC, 1, midiInPort, midiOutPort);
+
+    Sequencer.setMidiActivationCC(midiSeqActivationStartCC);
 }
 
 void Generator::draw(unsigned int quarterBeatCounter) {
@@ -96,14 +104,18 @@ void Generator::draw(unsigned int quarterBeatCounter) {
     ofSetColor(255, 255, 255);
     ledMatrix.updateColor(hueLine.color);
     ledMatrix.print();
+    effects.updateColor(hueLine.color);
+    if (ledMatrix.changedBitmap) effects.parseBitmap(ledMatrix.getBitmapChar()), ledMatrix.changedBitmap = false;
     ofSetColor(255, 255, 255);
     bool act;
     effects.draw();
 
     ofColor * seqBitmap;
-
-    if (Sequencer.ADSRoffset == 0) effects.process(); // ADSRoffset == 0 means sequencer triggered new selected step;
     Sequencer.setStep(quarterBeatCounter, effects.getBitmap());
+    if (Sequencer.ADSRoffset == 0) {
+        effects.process(); // ADSRoffset == 0 means sequencer triggered new selected step;
+        Sequencer.setStep(quarterBeatCounter, effects.getBitmap());
+    }
 
     seqBitmap = Sequencer.getSequencedBitmap();
     sequencedMatrix.parseBitmap(seqBitmap);
@@ -155,8 +167,19 @@ void Generator::mousePressed(ofMouseEventArgs & args){
 }
 
 void Generator::receiveMidi(ofxMidiEventArgs &args) {
-    if (!active) return;
-    
+    midiValue 		= args.byteTwo;
+	midiId 			= args.byteOne;
+    if (midiId == midiLedMatrixActivationCC && midiValue == 127) matrixSequenceMode = matrixSequenceMode ? false : true;
 
+    if (!active) return;
+    printf("active: %i, matrMode: %i",midiSeqActivationStartCC, matrixSequenceMode? 1 : 0);
+    for (int i=0; i<3; i++) Sequencer.sliders[i].receiveMidi(args);
+    if (matrixSequenceMode) {
+            printf("SEQ START: %i\n",midiLedMatrixActivationCC);
+        ledMatrix.setMidiActive(true); Sequencer.setMidiActive(false);
+    } else {
+        ledMatrix.setMidiActive(false); Sequencer.setMidiActive(true);
+    }
+//    midiOut.sendControlChange(1, midiLedMatrixActivationCC, 127); 
 }
 

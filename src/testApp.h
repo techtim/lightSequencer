@@ -170,7 +170,7 @@ public:
 	ofxMidiIn midiIn;
 	ofxMidiOut midiOut;
 
-	int midiPort;
+	unsigned int midiInPort, midiOutPort;
 	int midiId;
 	int midiValue;
 	double midiTimestamp;
@@ -180,6 +180,7 @@ public:
 	ofxSlider * colorSaturation;
     ofxSlider mixerSaturation;
     unsigned int midiSeqActivationStartCC;
+    unsigned int midiSeqBeginCC;
     unsigned int midiHueControlCC;
     unsigned int midiLedMatrixActivationCC;
 

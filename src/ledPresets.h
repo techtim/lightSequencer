@@ -49,7 +49,7 @@ class ledPresets : public LEDS {
         ofTrueTypeFont TTF;
         string message;
         string xmlName;
-    
+        string tmpStr;
     
         struct xmlGenerator {
             unsigned char * matrix;
@@ -77,5 +77,20 @@ class ledPresets : public LEDS {
             
             return s;
         }
+    
+        void stringHex(unsigned char* hexString, char* string, int stringLength ) 
+        {     
+            // Post:
+            
+            unsigned char uChar = 0;           
+            unsigned char ct = 0;
+            for ( int x = 0; x<stringLength; x+=2 )     
+            {         
+                sscanf(&string[x], "%02x", &uChar); 
+                printf("%02x", uChar);
+                hexString[ct++] = uChar;     
+            } 
+            
+        } 
 };
 #endif

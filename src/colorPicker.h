@@ -4,6 +4,7 @@
 #include "ofMain.h"
 #include "ofImage.h"
 #include "ofxMidi.h"
+#include "ofxButton.h"
 
 // when we exit, we shut down ofxImage
 void ofCloseFreeImage();
@@ -29,10 +30,11 @@ class colorPicker {
 		int width, height;
 		float xPos, yPos;
 		unsigned int colorPos, triWidth;
-	
+        unsigned int psyPos, evenCounter;
 		ofColor color;
 		ofImage img;
-        
+        ofxButton psyButton;
+
         //---MIDI
         void setupMidi(unsigned int ident, unsigned int channel=1, unsigned int port = 0);
         void receiveMidi(ofxMidiEventArgs &args);

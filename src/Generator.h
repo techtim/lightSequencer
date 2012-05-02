@@ -27,9 +27,11 @@ class Generator {
    	unsigned int width, height, leftX, leftY, atBottom;
    	unsigned int matrixW, matrixH, matrixCellSize, matrixSpace;
     // midi
-    unsigned int midiHue, midiSeqActivationStartCC, midiLedMatrixActivationCC, midiPort;
+    unsigned int midiHue, midiSeqActivationStartCC, midiSeqBeginCC, midiLedMatrixActivationCC;
+    unsigned int midiInPort, midiOutPort;
+    unsigned int midiValue, midiId;
     bool active;
-
+    bool matrixSequenceMode; // true if Matrix midi read active mode
     ofxMidiIn midiIn;
     ofxMidiOut midiOut;
 
@@ -39,12 +41,13 @@ public:
         
     void setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int hei, 
                unsigned int matW, unsigned int matH, bool at_bottom, unsigned int id);
-    void setupMidi(unsigned int midiPort, unsigned int seqActivCC, unsigned int ledMatrixActivCC, unsigned int hue);
+    void setupMidi(unsigned int inPort, unsigned int outPort, unsigned int seqActivCC, unsigned int seqBeginCC, unsigned int ledMatrixActivCC, unsigned int hue);
     void receiveMidi(ofxMidiEventArgs &args);
 
     void setActive(bool to = true) {
         active = to;
-        sequencedMatrix.setMidiActive(to);
+        if (!to) ledMatrix.setMidiActive(to);
+        Sequencer.setMidiActive(to);
     }
 
     void draw(unsigned int quarterBeatCounter);

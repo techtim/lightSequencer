@@ -21,7 +21,7 @@ class bpmControl {
     ~bpmControl();
 
     void setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int hei);
-    void setupMidi(unsigned int ident, unsigned int channel=1, unsigned int port = 0);
+    void setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort);
 
 	void draw();
 
@@ -56,7 +56,7 @@ class bpmControl {
 	void receiveMidi(ofxMidiEventArgs &args);
     ofxMidiIn midiIn;
     ofxMidiOut midiOut;
-
+    unsigned int midiInPort, midiOutPort;
 	unsigned int midiChannel; // channel for exact sequence , setuped 
 	unsigned int midiSyncCC, midiResetCC;
 	unsigned int midiUpBpmCC, midiDownBpmCC;

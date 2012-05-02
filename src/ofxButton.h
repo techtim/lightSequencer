@@ -39,12 +39,12 @@ public:
 	string inactictiveText;
     
     //---MIDI
-    void setupMidi(unsigned int ident, unsigned int channel = 1, unsigned int port = 0);
+    void setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort);
     void receiveMidi(ofxMidiEventArgs &args);
     void setMidiActive(bool is) { midiActive = is; }
     ofxMidiIn midiIn;
     ofxMidiOut midiOut;
-    
+    unsigned int midiInPort, midiOutPort;
     unsigned int midiChannel, midiId, midiValue; // channel for exact sequence , setuped 
     bool midiActive;
 
