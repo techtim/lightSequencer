@@ -23,13 +23,13 @@ FX::~FX() {
 
 void FX::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int hei, unsigned int col, unsigned int row) {
     xLeft = x, yLeft = y, width = wid, height = hei, columns = col, rows = row, length = col*row;
-    xRight = x+width; yRight = y+height;
+    xRight = xLeft+width; yRight = yLeft+height;
 
     LEDS::set(columns, rows, 1, xLeft, yLeft, 1, true);
 
-    invertButton.setup(xLeft+20, yLeft, 80, 20, true);
+    invertButton.setup(xLeft+20, yLeft, 80, height, true);
     invertButton.setActictiveText("invert");
-    mirrorButton.setup(xLeft+110, yLeft, 80, 20, true);
+    mirrorButton.setup(xLeft+110, yLeft, 80, height, true);
     mirrorButton.setActictiveText("mirror");
 
     setupFinished = true;

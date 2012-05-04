@@ -9,7 +9,7 @@ colorPicker::colorPicker(){
         yPos     = 0;
 		
 		colorPos = 0;
-		triWidth = 40;
+		triWidth = 30;
         psyPos   = 0;
         evenCounter = 0;
 }
@@ -25,6 +25,10 @@ void colorPicker::setPosition(int x, int y){
     yPos = y;
     psyButton.setup(xPos-30, yPos, 30, 30, true);
     psyButton.setActictiveText("psy");
+//    hueControl.setup(<#unsigned int x#>, <#unsigned int y#>, <#unsigned int wid#>, <#unsigned int hei#>, <#bool typ#>)
+    hueControl.setup(xPos, yPos+20, height, 15, true, 0, 127, true);
+    hueControl.setActictiveText("ATT");
+
 }
 
 bool colorPicker::isClicked(int x, int y) {
@@ -51,20 +55,23 @@ void colorPicker::draw()
 {
 	img.draw(xPos, yPos);
     psyButton.draw();
+    hueControl.draw();
     if (psyButton.isOn) {
-        if (evenCounter == 0) psyPos+=60;
+        if (evenCounter == 0) psyPos+=hueControl.getValue();
         evenCounter = evenCounter ? 0 : 1;
+        if (psyPos >= 360) psyPos = 0;
         colorPos = psyPos;
-        if (psyPos >= 360) psyPos = 1;
+//        color.setHsb(psyPos, 255.0f, 255.0f);
         color = HsvToRgb(psyPos, 255, 255);
     } else {
+//        color.setHue(colorPos);
         color = HsvToRgb(colorPos, 255, 255);
     }
 
 	ofSetHexColor(color.getHex());
 	ofTriangle(xPos+colorPos, yPos+img.height, 
-			   xPos+colorPos-triWidth/2, yPos+img.height+20, 
-			   xPos+colorPos+triWidth/2, yPos+img.height+20
+			   xPos+colorPos-triWidth/2, yPos+img.height+15, 
+			   xPos+colorPos+triWidth/2, yPos+img.height+15
 	);	
 }
 
@@ -78,11 +85,11 @@ ofColor colorPicker::HsvToRgb (float hue, float satur, float value )
 	
     rgbColor.set(r, g, b, 0);
 	
-	if (hue==0) return rgbColor;
-    if (hue==360){
-        rgbColor.set(255, 255, 255, 255);
-        return rgbColor;
-    }
+//	if (hue==0) return rgbColor;
+//    if (hue==360){
+//        rgbColor.set(255, 255, 255, 255);
+//        return rgbColor;
+//    }
 	
     //  For rgbColor
     H = (int)(hue / 60);
@@ -132,6 +139,7 @@ void colorPicker::setupMidi(unsigned int ident, unsigned int channel, unsigned i
     if (port != 100) { // do not turn on trick
         midiIn.openPort(port);
         ofAddListener(midiIn.newMessageEvent, this, &colorPicker::receiveMidi);
+        hueControl.setupMidi(71);
     }
 }
 
@@ -145,4 +153,5 @@ void colorPicker::receiveMidi(ofxMidiEventArgs &args)
             colorPos = valueMapped;
             color = HsvToRgb(colorPos, 255, 255);
 		}
+    hueControl.receiveMidi(args);
 }

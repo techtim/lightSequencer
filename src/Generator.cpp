@@ -37,8 +37,8 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     matrixSpace = 2;
     //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
 //    matrixCellSize=50;
-    matrixCellSize = (width/matrixW > height/4/matrixH ? height/4/matrixH : width/matrixW ) - matrixSpace;
-    seqCellSize = 40;
+    matrixCellSize = height/6/matrixH - matrixSpace;
+    seqCellSize = 35;
 	seqCellSpace = 5;
     float seqPixelWidth = maxSteps/2 * (seqCellSize + seqCellSpace) + seqCellSize; // one more cell for quantisation
     float matrixPixelWidth = (matrixSpace+matrixCellSize)*matrixW-matrixSpace;
@@ -51,13 +51,13 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     //    hueLine.xPos+hueLine.height;
   
     //		colorSaturation.setup(leftX+matrixCellSize/2, leftY+10, matrixCellSize/2, 50, false, 0, 255);
-    
+
     ledMatrix.set(matrixW, matrixH, matrixCellSize, 
-                     leftX+(width-matrixPixelWidth)/2 , leftY+90, matrixSpace, true);
+                     leftX+(width-matrixPixelWidth)/2 , leftY+60, matrixSpace, true);
     
-    effects.setup(leftX, ledMatrix.yRight, width, 40, matrixW, matrixH);
-    
-    Sequencer.Create(maxSteps, leftX+(width-seqPixelWidth)/2, leftY+170, seqCellSize, seqCellSpace, matrixW*matrixH, selectColor, actColor, inactColor);
+    effects.setup(leftX, ledMatrix.yRight, width, 20, matrixW, matrixH);
+
+    Sequencer.Create(maxSteps, leftX+(width-seqPixelWidth)/2, effects.yLeft+effects.height+5, seqCellSize, seqCellSpace, matrixW*matrixH, selectColor, actColor, inactColor);
 
     matrixSequenceMode = false;
 
