@@ -74,12 +74,12 @@ void LEDS::parseBitmap(unsigned char * pixels)
         } else {
             leds[count].color.set((float)pixels[i],(float)pixels[i+1], (float)pixels[i+2]);
             leds[count].isSelected = true;
-       		printf("%i PIXEL: %i , %i , %i \n", count, pixels[i], pixels[i+1], pixels[i+2]);
+//       		printf("%i PIXEL: %i , %i , %i \n", count, pixels[i], pixels[i+1], pixels[i+2]);
         }
         count++;
 	}
     changedBitmap = true;
-    printf("\n \n \n");
+//    printf("\n \n \n");
 };
 
 void LEDS::parseBitmap(ofColor * pixels)

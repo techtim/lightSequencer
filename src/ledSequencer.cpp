@@ -88,7 +88,7 @@ void ledSequencer::setupMidi(unsigned int midiSeqStart, unsigned int channel, un
 bool ledSequencer::isClicked(int x, int y, bool dragged)
 {
 	bool isclicked = false;
-	for (int i = 0; i < 3; i++) 
+	for (int i = 0; i < 3; i++)
 		if (isclicked == sliders[i].isClicked(x, y))
 				setADSR(sliders[0].getValue(), sliders[1].getValue(), sliders[2].getValue());
 	if (dragged) return isclicked;
