@@ -106,13 +106,13 @@ void testApp::setup(){
     bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
 //########################
     //---LED
-	Arduino.setup("/dev/tty.usbmodem411", 19200);
+	Arduino.setup("/dev/tty.usbmodem3d11", 19200);
 	enableArduino = false;
 	Arduino.setVerbose(false);
 	Arduino.flush();
     
 	//---Matrix---
-    matrixW = 8;
+    matrixW = 1;
     matrixH = 1;
 	
     matrixSpace = 2;
@@ -174,9 +174,9 @@ void testApp::setup(){
     }
 
 	Volume[0].setup(mixerRegion.leftX,  50, 20, 255, false, 0, 255);
-	Volume[1].setup(mixerRegion.rightX-10, 50, 20, 255, false, 0, 255);
+	Volume[1].setup(mixerRegion.rightX-20, 50, 20, 255, false, 0, 255);
 	Volume[2].setup(mixerRegion.leftX,  winHigh-controllersHeight+50, 20, 255, false, 0, 255);
-	Volume[3].setup(mixerRegion.rightX-10, winHigh-controllersHeight+50, 20, 255, false, 0, 255);
+	Volume[3].setup(mixerRegion.rightX-20, winHigh-controllersHeight+50, 20, 255, false, 0, 255);
 
     Volume[0].setupMidi(120, 1, midiInPort, false);
     Volume[1].setupMidi(121, 1, midiInPort, false);
@@ -186,9 +186,15 @@ void testApp::setup(){
     mixerSaturation.setup(mixerRegion.leftX+(mixerRegion.rightX-mixerRegion.leftX)/2-255/2, mixerRegion.rightY/2 - 100, 255, 20, true, 0, 255);
 //    mixerSaturation.setActictiveText("SAT");
     mixerSaturation.setupMidi(70, 1, midiInPort, false);
+    int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/4/matrixH - matrixSpace;
+    int mixeWidth = mixerRegion.rightX - mixerRegion.leftX;
+//	ledControl.set(matrixW, matrixH, ctrlLedSize, 
+//                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
+//    ledControl.set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
+	ledControl.set(matrixW, matrixH, ctrlLedSize, 
+                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
 
-	ledControl.set(matrixW, matrixH, (mixerRegion.rightX-mixerRegion.leftX+60)/matrixW, mixerRegion.leftX - matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
-//    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
+    //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
 	ledControl.setClickedAll(); 
 	Mixer = new bitmapMixer;
 	Mixer->setup(controllersNum, matrixW, matrixH);
@@ -378,6 +384,7 @@ void testApp::audioInputListener(ofxAudioEventArgs &args){
 void testApp::setInputDevice(int i){
 	setupFinished = false;
 	inputSoundStream.close();
+    printf("inputSoundStream.close() \n");
 	inputDeviceID = i;
 	inputSoundStream.setDeviceId(inputDeviceID);	//this now uses the audio input rather than mic input for mac 	
 	inputSoundStream.setup(0, 2, this, 44100, BUFFER_SIZE, 4);
