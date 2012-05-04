@@ -176,6 +176,10 @@
 		AED5C48E14B5FAE6001A3B7B /* ofxPortaudioSoundStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxPortaudioSoundStream.cpp; sourceTree = "<group>"; };
 		AED5C48F14B5FAE6001A3B7B /* ofxPortaudioSoundStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxPortaudioSoundStream.h; sourceTree = "<group>"; };
 		AED5C49314B601E4001A3B7B /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
+		AEEB532815516B22006D4C76 /* ofxUIWidgetWithLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUIWidgetWithLabel.h; sourceTree = "<group>"; };
+		AEEB532915516B22006D4C76 /* ofxUIRotarySlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUIRotarySlider.h; sourceTree = "<group>"; };
+		AEEB532B15516B67006D4C76 /* ofxUIWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUIWidget.h; sourceTree = "<group>"; };
+		AEEB532C15516B67006D4C76 /* ofxUILabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxUILabel.h; sourceTree = "<group>"; };
 		AEF9F20615404FB100D63DC0 /* FX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FX.h; sourceTree = "<group>"; };
 		AEF9F20715404FD200D63DC0 /* FX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FX.cpp; sourceTree = "<group>"; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
@@ -374,6 +378,17 @@
 			path = ../../../addons/ofxPortaudioSoundStream;
 			sourceTree = "<group>";
 		};
+		AEEB532A15516B45006D4C76 /* ofxUI */ = {
+			isa = PBXGroup;
+			children = (
+				AEEB532B15516B67006D4C76 /* ofxUIWidget.h */,
+				AEEB532C15516B67006D4C76 /* ofxUILabel.h */,
+				AEEB532815516B22006D4C76 /* ofxUIWidgetWithLabel.h */,
+				AEEB532915516B22006D4C76 /* ofxUIRotarySlider.h */,
+			);
+			name = ofxUI;
+			sourceTree = "<group>";
+		};
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
@@ -482,6 +497,7 @@
 				22EAAAA1148BCC1E005465CE /* ofxSlider.cpp */,
 				22EAAAAD148BCC7A005465CE /* fft.cpp */,
 				22EAAAAE148BCC7A005465CE /* fft.h */,
+				AEEB532A15516B45006D4C76 /* ofxUI */,
 				22EAAA8E148BCB55005465CE /* midi */,
 			);
 			path = src;
