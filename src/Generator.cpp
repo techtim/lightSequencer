@@ -134,6 +134,13 @@ void Generator::mouseDragged(ofMouseEventArgs & args){
     if (hueLine.isClicked(args.x, args.y)) {
         ledMatrix.updateColor(hueLine.color);
     }
+    if (ledMatrix.isClicked(args.x, args.y))
+    {
+        //printf("MATRIX CLICKED\n");
+        ledMatrix.setClicked(args.x,args.x, hueLine.color);
+        ledMatrix.updateColor(hueLine.color);
+        effects.parseBitmap(ledMatrix.getBitmapChar());
+    }
 }
 
 void Generator::mousePressed(ofMouseEventArgs & args){
