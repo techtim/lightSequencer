@@ -30,7 +30,7 @@ bpmControl::~bpmControl() {
 void bpmControl::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int hei){
 
     leftX = x; leftY = y; width = wid; height = hei;
-    rightX = leftX + width; rightY = leftY + hei;
+    rightX = leftX + width; rightY = leftY + height;
 
     Sync.setup(leftX+width/4-50/2, leftY + 10 , 50, 30, true);
 	Sync.setActictiveText("SYNC");

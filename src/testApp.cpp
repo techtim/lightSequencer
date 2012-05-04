@@ -101,7 +101,7 @@ void testApp::setup(){
 	
     bpmCtrl.setup(
         mixerRegion.leftX, mixerRegion.leftY + 100,
-        mixerRegion.rightX - mixerRegion.leftX, mixerRegion.rightY - mixerRegion.leftY -400
+        mixerRegion.rightX - mixerRegion.leftX, mixerRegion.leftY+50
     );
     bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
 //########################
@@ -112,8 +112,8 @@ void testApp::setup(){
 	Arduino.flush();
     
 	//---Matrix---
-    matrixW = 1;
-    matrixH = 1;
+    matrixW = 6;
+    matrixH = 5;
 	
     matrixSpace = 2;
 //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
@@ -182,17 +182,17 @@ void testApp::setup(){
     Volume[1].setupMidi(121, 1, midiInPort, false);
     Volume[2].setupMidi(122, 1, midiInPort, false);
     Volume[3].setupMidi(123, 1, midiInPort, false);
-    
-    mixerSaturation.setup(mixerRegion.leftX+(mixerRegion.rightX-mixerRegion.leftX)/2-255/2, mixerRegion.rightY/2 - 100, 255, 20, true, 0, 255);
+
+    mixerSaturation.setup(mixerRegion.leftX+(mixerRegion.rightX-mixerRegion.leftX)/2-255/2, 200, 255, 20, true, 0, 255);
 //    mixerSaturation.setActictiveText("SAT");
     mixerSaturation.setupMidi(70, 1, midiInPort, false);
-    int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/4/matrixH - matrixSpace;
-    int mixeWidth = mixerRegion.rightX - mixerRegion.leftX;
+    int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/3/matrixH - matrixSpace;
+    int mixerWidth = mixerRegion.rightX - mixerRegion.leftX;
 //	ledControl.set(matrixW, matrixH, ctrlLedSize, 
 //                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
 //    ledControl.set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
-	ledControl.set(matrixW, matrixH, ctrlLedSize, 
-                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
+	ledControl.set(matrixW, matrixH, ctrlLedSize,
+                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/3, matrixSpace);
 
     //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
 	ledControl.setClickedAll(); 
@@ -200,7 +200,7 @@ void testApp::setup(){
 	Mixer->setup(controllersNum, matrixW, matrixH);
     
     presetsNum = 32;
-    Presets.setup(mixerRegion.leftX+30, mixerRegion.rightY-winHigh/3, mixerRegion.rightX-mixerRegion.leftX-60, winHigh/3, matrixW, matrixH, presetsNum);
+    Presets.setup(mixerRegion.leftX+30, ledControl.yRight+10, mixerRegion.rightX-mixerRegion.leftX-60, winHigh/4, matrixW, matrixH, presetsNum);
 
     setupFinished = true;
 }

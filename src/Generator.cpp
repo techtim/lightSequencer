@@ -36,25 +36,28 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     atBottom = at_bottom;
     matrixSpace = 2;
     //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
-//    matrixCellSize=50;
-    matrixCellSize = height/6/matrixH - matrixSpace;
+    matrixCellSize=(width/2-40)/matrixW - matrixSpace*matrixW;
+//    matrixCellSize = height/6/matrixH - matrixSpace;
     seqCellSize = 35;
 	seqCellSpace = 5;
     float seqPixelWidth = maxSteps/2 * (seqCellSize + seqCellSpace) + seqCellSize; // one more cell for quantisation
     float matrixPixelWidth = (matrixSpace+matrixCellSize)*matrixW-matrixSpace;
-    
+//    int matrixPixelWidth = width/2-40/matrixW;
     leftY += atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
-    
+
     hueLine.loadImage("../../data/hsv_line.jpeg");
     hueLine.setPosition(leftX+(int)(width-hueLine.width)/2, leftY+10);
-
-    //    hueLine.xPos+hueLine.height;
   
     //		colorSaturation.setup(leftX+matrixCellSize/2, leftY+10, matrixCellSize/2, 50, false, 0, 255);
+//
+//    ledMatrix.set(matrixW, matrixH, matrixCellSize, 
+//                     leftX+(width-matrixPixelWidth)/2 , leftY+60, matrixSpace, true);
 
     ledMatrix.set(matrixW, matrixH, matrixCellSize, 
-                     leftX+(width-matrixPixelWidth)/2 , leftY+60, matrixSpace, true);
-    
+                  leftX+10 , leftY+60, matrixSpace, true);
+    sequencedMatrix.set(matrixW, matrixH, matrixCellSize, 
+                        leftX+matrixPixelWidth+20, leftY+60, matrixSpace, true);
+
     effects.setup(leftX, ledMatrix.yRight, width, 20, matrixW, matrixH);
 
     Sequencer.Create(maxSteps, leftX+(width-seqPixelWidth)/2, effects.yLeft+effects.height+5, seqCellSize, seqCellSpace, matrixW*matrixH, selectColor, actColor, inactColor);
@@ -62,10 +65,10 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     matrixSequenceMode = false;
 
     leftY -= atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
+//   sequencedMatrix.set(matrixW, matrixH, matrixCellSize,
+//                       leftX+(width-matrixPixelWidth)/2, atBottom ? leftY : Sequencer.sliders[2].rightY+5, matrixSpace, true);
 //    sequencedMatrix.set(matrixW, matrixH, matrixCellSize,
-//                           leftX+(width-matrixPixelWidth)/2, leftY+(atBottom ? -matrixH * matrixCellSize : height-matrixCellSize), matrixSpace, true);
-    sequencedMatrix.set(matrixW, matrixH, matrixCellSize,
-                        leftX+(width-matrixPixelWidth)/2, leftY+(atBottom ? 0 : height-(matrixCellSize+matrixSpace)*matrixH), matrixSpace, true);
+//                        leftX+(width-matrixPixelWidth)/2, leftY+(atBottom ? 0 : height-(matrixCellSize+matrixSpace)*matrixH), matrixSpace, true);
     sequencedMatrix.setClickedAll();
     sequencedMatrix.setMidiActive(false);
     ofAddListener(ofEvents.mousePressed, this, &Generator::mousePressed);

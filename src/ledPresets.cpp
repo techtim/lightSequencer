@@ -40,14 +40,15 @@ void ledPresets::setup(unsigned int x, unsigned int y, unsigned int wid, unsigne
     }
         true;
 //LEDS::set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
-    LEDS::set(8, presetsNum/8, width/8-2, x, y, 4);
-    
-    Record.setup(leftX+width/2-width/8*2, leftY+presetsNum/8*width/8+4, width/8*4, width/8, true);
+    unsigned int cellSize = (height-4*8)/(presetsNum/8*1.5);
+    LEDS::set(8, presetsNum/8, cellSize, leftX+width/2-(cellSize+4)*8/2, y, 4);
+
+    Record.setup(leftX+width/2-width/8*2, LEDS::yRight+5, width/8*4, 30, true);
     Record.setActictiveText("REC ON");
     Record.setInactictiveText("REC OFF");
-    SaveXML.setup(leftX+width/2-width/8*2, leftY+presetsNum/8*width/8+35, width/8*4, width/8, false);
+    SaveXML.setup(leftX+width/2-width/8*2, LEDS::yRight+40, width/8*4, 30, false);
     SaveXML.setActictiveText("SAVE XML");
-    LoadXML.setup(leftX+width/2-width/8*2, leftY+presetsNum/8*width/8+80, width/8*4, width/8, false);
+    LoadXML.setup(leftX+width/2-width/8*2, LEDS::yRight+80, width/8*4, 30, false);
     LoadXML.setActictiveText("LOAD XML");
 //    Record.setupMidi(41, 1, 0);
 //    Record.setMidiActive(true);
