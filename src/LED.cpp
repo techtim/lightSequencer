@@ -21,6 +21,7 @@ bool LED::isClicked(int x, int y) {
     if (y <= yRight && y >= yLeft && x <= xRight && x >= xLeft) {
         isSelected = (isSelected == true ? false : true);
 //        printf("isSelected=%i; num=%i",isSelected, num);
+        printf("X=%i; Y=%i",x, y);
         return true;
     }
     return false;

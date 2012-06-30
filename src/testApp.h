@@ -161,6 +161,7 @@ public:
 	//		--- LED ---
 	ofSerial Arduino;
 	bool enableArduino;
+    string serialName;
 	
 	//		--- MIDI ---
 	void newMessage(ofxMidiEventArgs &args);

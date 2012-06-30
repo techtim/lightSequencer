@@ -14,7 +14,7 @@ class LEDS {
         
 		bool isClicked(int x, int y);
 		LED * getClicked(int x, int y);
-		void setClicked(int x, int y, ofColor newColor);
+		void setClicked(int x, int y, ofColor newColor, bool isDragged=false);
 		void setClickedAll();
         int numClicked(int x, int y, ofColor newColor);
     

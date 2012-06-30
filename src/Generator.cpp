@@ -36,14 +36,14 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     atBottom = at_bottom;
     matrixSpace = 2;
     //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
-    matrixCellSize=(width/2-40)/matrixW - matrixSpace*matrixW;
+    matrixCellSize = (width-20)/(2*matrixW) - matrixSpace;
 //    matrixCellSize = height/6/matrixH - matrixSpace;
     seqCellSize = 35;
 	seqCellSpace = 5;
     float seqPixelWidth = maxSteps/2 * (seqCellSize + seqCellSpace) + seqCellSize; // one more cell for quantisation
     float matrixPixelWidth = (matrixSpace+matrixCellSize)*matrixW-matrixSpace;
 //    int matrixPixelWidth = width/2-40/matrixW;
-    leftY += atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
+//    leftY += atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
 
     hueLine.loadImage("../../data/hsv_line.jpeg");
     hueLine.setPosition(leftX+(int)(width-hueLine.width)/2, leftY+10);
@@ -54,9 +54,9 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
 //                     leftX+(width-matrixPixelWidth)/2 , leftY+60, matrixSpace, true);
 
     ledMatrix.set(matrixW, matrixH, matrixCellSize, 
-                  leftX+10 , leftY+60, matrixSpace, true);
+                  leftX+10 , leftY+70, matrixSpace, true);
     sequencedMatrix.set(matrixW, matrixH, matrixCellSize, 
-                        leftX+matrixPixelWidth+20, leftY+60, matrixSpace, true);
+                        leftX+matrixPixelWidth+20, leftY+70, matrixSpace, true);
 
     effects.setup(leftX, ledMatrix.yRight, width, 20, matrixW, matrixH);
 
@@ -140,7 +140,7 @@ void Generator::mouseDragged(ofMouseEventArgs & args){
     if (ledMatrix.isClicked(args.x, args.y))
     {
         //printf("MATRIX CLICKED\n");
-        ledMatrix.setClicked(args.x,args.x, hueLine.color);
+        ledMatrix.setClicked(args.x, args.y, hueLine.color, true);
         ledMatrix.updateColor(hueLine.color);
         effects.parseBitmap(ledMatrix.getBitmapChar());
     }

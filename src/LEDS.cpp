@@ -163,14 +163,17 @@ bool LEDS::isClicked(int x, int y)
 
 
 
-void LEDS::setClicked(int x, int y, ofColor newColor)
+void LEDS::setClicked(int x, int y, ofColor newColor, bool isDragged)
 {
 	for (unsigned int i = 0; i < columns * rows; i++)
-		if (leds[i].isClicked(x, y) && leds[i].isSelected) 
+		if (leds[i].isClicked(x, y)) 
 		{
-			leds[i].color = newColor;
+			if (leds[i].isSelected) {
+                leds[i].color = newColor;
+                changedBitmap = true;
+            }
+            if (ledLastClicked == i && isDragged) leds[i].isClicked(x, y);
             ledLastClicked = i;
-            changedBitmap = true;
             break;
 		}
 }

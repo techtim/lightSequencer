@@ -20,7 +20,7 @@
 class Generator {
     ofColor hueColor, selectColor, actColor, inactColor;
     colorPicker hueLine;
-    FX effects;
+
     // sequencer
 	unsigned int maxSteps, limitSteps, seqCellSize, seqCellSpace;
     // view
@@ -61,7 +61,7 @@ public:
 
     ledSequencer Sequencer;
     LEDS ledMatrix, sequencedMatrix;
-    
+    FX effects;
     unsigned int id;
     
     ofEvent<ofMouseEventArgs> mousePress;

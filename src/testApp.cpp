@@ -106,14 +106,15 @@ void testApp::setup(){
     bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
 //########################
     //---LED
-	Arduino.setup("/dev/tty.usbmodem3d11", 19200);
-	enableArduino = false;
+    serialName = "/dev/tty.usbmodem621";
+	Arduino.setup(serialName, 19200);
+    enableArduino = false;
 	Arduino.setVerbose(false);
 	Arduino.flush();
     
 	//---Matrix---
     matrixW = 6;
-    matrixH = 5;
+    matrixH = 1;
 	
     matrixSpace = 2;
 //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
@@ -187,12 +188,15 @@ void testApp::setup(){
 //    mixerSaturation.setActictiveText("SAT");
     mixerSaturation.setupMidi(70, 1, midiInPort, false);
     int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/3/matrixH - matrixSpace;
+    ctrlLedSize = matrixH < 2 ? (mixerRegion.rightX-mixerRegion.leftX)/matrixW-matrixSpace : ctrlLedSize;
     int mixerWidth = mixerRegion.rightX - mixerRegion.leftX;
 //	ledControl.set(matrixW, matrixH, ctrlLedSize, 
 //                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
 //    ledControl.set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
-	ledControl.set(matrixW, matrixH, ctrlLedSize,
-                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/3, matrixSpace);
+//	ledControl.set(matrixW, matrixH, ctrlLedSize,
+//                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/3, matrixSpace);
+    ledControl.set(matrixW, matrixH, ctrlLedSize,
+                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/2, matrixSpace);
 
     //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
 	ledControl.setClickedAll(); 
@@ -243,16 +247,12 @@ void testApp::draw(){
 	ledControl.parseBitmap(Mixer->outputMixed());
 	ledControl.print();
 	unsigned char * matrixPixels = ledControl.getBitmapChar();
+    ofColor * colorPix = ledControl.getBitmap();
 //###
 //    if (frameCount == 0) TCP.write((char*)matrixPixels, ledControl.columns*ledControl.rows*3);
 //###
 	if ((TcpButton.isOn || ArdButton.isOn) && frameCount == 0) // && enableArduino)
 	{
-//		Arduino.flush(1, 1);
-		//printf("\n ******* \n");
-		//for (int a = 0; a < serialSyncCount; )
-		//			if (Arduino.writeByte(1)) a++;
-		
 		//unsigned char stat = Arduino.readByte();
 		//		printf("STAT: %C \n", stat);
 		if (ArdButton.isOn) {
@@ -268,22 +268,30 @@ void testApp::draw(){
 		}
 
 		int counter = 0;
-		
+
 		//printf("FOR: %i \n", matrixW * matrixH * 3);
 		
-		for (int i=0; i < matrixW * matrixH * 3; i++)
-		{
-			unsigned char pix = matrixPixels[i];// >> 2;
-//					if (pix == "0") pix = "00";
-			//		sscanf(str,"%x",&b);
-//			printf("Write \"%02X\" \n", pix);
-//			if (TcpButton.isOn) TCP.write(pix, true);
-            if (ArdButton.isOn)printf("Write \"%02X\" \n", pix), Arduino.writeByte(pix);
-//			{
-//				counter++;
-//			}
-		}
-//        std::cout<< "\n";
+        bool invert = false;
+        unsigned int invCounter=0;
+        for (unsigned int i=0; i < matrixW * matrixH;i++)
+        {
+            if (i != 0 && i % (matrixW) == 0) {
+                invCounter = matrixW+i-1;
+                invert = invert ? false : true;
+            }
+            ofColor colr = invert ?
+            colorPix[invCounter]:
+            colorPix[i];
+            invCounter--;
+            if (ArdButton.isOn) {
+                Arduino.writeByte(colr.r);
+                Arduino.writeByte(colr.g);
+                Arduino.writeByte(colr.b);
+                printf("%02X%02X%02X ", colr.r , colr.g, colr.b);
+            }
+        }
+        if (ArdButton.isOn) printf("\n");
+
 	}
 	
 }
@@ -321,7 +329,15 @@ void testApp::mousePressed(int x, int y, int button){
     };
     Play.isClicked(x,y);
     bpmCtrl.isClicked(x,y);
-    ArdButton.isClicked(x,y);
+    if (ArdButton.isClicked(x,y)) {
+        if (ArdButton.isOn) {
+            Arduino.setup(serialName, 19200);
+            Arduino.setVerbose(false);
+            Arduino.flush();
+        } else {
+            Arduino.close();
+        }
+    }
     mixerSaturation.isClicked(x, y);
     if (TcpButton.isClicked(x,y)) {
         if (!TCP.weConnected) TCP.setup();

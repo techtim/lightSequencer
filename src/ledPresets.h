@@ -58,6 +58,8 @@ class ledPresets : public LEDS {
             float att;
             float dec;
             float rel;
+            unsigned int fxInv;
+            unsigned int fxMir;
         };
     
         struct Preset {

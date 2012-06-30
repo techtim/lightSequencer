@@ -19,7 +19,7 @@ class colorPicker {
 		void loadImage(string path);
 
 		void setPosition(int x, int y);
-		bool isClicked(int x, int y);
+		bool isClicked(int x, int y, bool isDragged = false);
 		int	 getClickedX(int x, int y);
 		int	 getClickedY(int x, int y);
 
@@ -32,6 +32,7 @@ class colorPicker {
 		float xPos, yPos;
 		unsigned int colorPos, triWidth;
         unsigned int psyPos, evenCounter;
+        int colorPosStart, colorPosEnd; 
 		ofColor color;
 		ofImage img;
         ofxButton psyButton;

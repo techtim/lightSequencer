@@ -25,20 +25,29 @@ void colorPicker::setPosition(int x, int y){
     yPos = y;
     psyButton.setup(xPos-30, yPos, 30, 30, true);
     psyButton.setActictiveText("psy");
-//    hueControl.setup(<#unsigned int x#>, <#unsigned int y#>, <#unsigned int wid#>, <#unsigned int hei#>, <#bool typ#>)
-    hueControl.setup(xPos, yPos+20, height, 15, true, 0, 127, true);
-    hueControl.setActictiveText("ATT");
+
+    hueControl.setup(xPos, yPos+35, 127, 15, true, 0, 127, true);
+    hueControl.setActictiveText("");
 
 }
 
-bool colorPicker::isClicked(int x, int y) {
+bool colorPicker::isClicked(int x, int y, bool isDragged) {
     psyButton.isClicked(x, y);
+    hueControl.isClicked(x, y);
     if (y >= yPos && y <= (yPos + height) && x >= xPos && x <= xPos + (width))
 	{ 
         colorPos = getClickedX(x, y);
+        if (isDragged) {
+            printf("Dragged: ");
+            colorPosEnd = colorPos;
+        } else {
+            colorPosStart = colorPos;
+            colorPosEnd = -1;
+        }
 		color = HsvToRgb(colorPos, 255, 255);
 		return true;
 	}
+    printf("POS =%i, LEFT=%i, POS RIGHT=%i\n", colorPos, colorPosStart, colorPosEnd);
     return false;
 }
 
@@ -56,10 +65,12 @@ void colorPicker::draw()
 	img.draw(xPos, yPos);
     psyButton.draw();
     hueControl.draw();
+    int psyLimitLeft = colorPosEnd > 0 ? colorPosStart : 0; // check if PosEnd > 0 means active color select region
+    int psyLimitRight = colorPosEnd > 0 ? colorPosEnd : 360;
     if (psyButton.isOn) {
         if (evenCounter == 0) psyPos+=hueControl.getValue();
         evenCounter = evenCounter ? 0 : 1;
-        if (psyPos >= 360) psyPos = 0;
+        if (psyPos >= psyLimitRight) psyPos = psyLimitLeft;
         colorPos = psyPos;
 //        color.setHsb(psyPos, 255.0f, 255.0f);
         color = HsvToRgb(psyPos, 255, 255);

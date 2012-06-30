@@ -76,7 +76,8 @@ void ledPresets::save(int presNum, unsigned int genNum, Generator & gen) {
     presets[presNum].generators[genNum].att     = gen.Sequencer.attack;
     presets[presNum].generators[genNum].dec     = gen.Sequencer.decay;
     presets[presNum].generators[genNum].rel     = gen.Sequencer.release;
-    
+    presets[presNum].generators[genNum].fxInv   = gen.effects.invertButton.isOn ? 1 : 0;
+    presets[presNum].generators[genNum].fxMir   = gen.effects.mirrorButton.isOn ? 1 : 0;
     printf("%f , %f , %f", presets[presNum].generators[genNum].att, 
     presets[presNum].generators[genNum].dec,
            presets[presNum].generators[genNum].rel);
@@ -98,6 +99,9 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen) {
     gen.ledMatrix.parseBitmap(presets[presNum].generators[genNum].matrix);
     gen.Sequencer.parseBitmap(presets[presNum].generators[genNum].sequence);
     gen.Sequencer.setADSR(presets[presNum].generators[genNum].att, presets[presNum].generators[genNum].dec, presets[presNum].generators[genNum].rel);
+    presets[presNum].generators[genNum].fxInv   = gen.effects.invertButton.isOn ? 1 : 0;
+    gen.effects.invertButton.isOn = presets[presNum].generators[genNum].fxInv == 1 ? true : false;
+    gen.effects.mirrorButton.isOn = presets[presNum].generators[genNum].fxMir == 1 ? true : false;
 }
 
 void ledPresets::draw() {
@@ -153,6 +157,8 @@ bool ledPresets::loadXML() {
             presets[i].generators[j].att = XML.getValue("att", 0);
             presets[i].generators[j].dec = XML.getValue("dec", 0);
             presets[i].generators[j].rel = XML.getValue("rel", 0);
+            presets[i].generators[j].fxInv = XML.getValue("fxInv", 0);
+            presets[i].generators[j].fxMir = XML.getValue("fxMir", 0);
             presets[i].is_active = leds[i].isSelected = XML.getValue("isActive", 0) ? true : false;
             if (presets[i].is_active) {
                 tmpStr = XML.getValue("bitmap", "");
@@ -191,6 +197,9 @@ bool ledPresets::saveXML() {
                 TMP.setValue("GENERATOR:dec", presets[i].generators[j].dec, lastTagNumber);
                 TMP.setValue("GENERATOR:rel", presets[i].generators[j].rel, lastTagNumber);
                 TMP.setValue("GENERATOR:quant", (int)presets[i].generators[j].quant, lastTagNumber);
+                TMP.setValue("GENERATOR:fxInv", (int)presets[i].generators[j].fxInv, lastTagNumber);
+                TMP.setValue("GENERATOR:fxMir", (int)presets[i].generators[j].fxMir, lastTagNumber);
+
                 TMP.setValue("GENERATOR:isActive", 1, lastTagNumber);
                 string strmat = hexString(presets[i].generators[j].matrix, ledsW*ledsH*3);
 //                printf("strmat = %s\n", strmat.c_str());
