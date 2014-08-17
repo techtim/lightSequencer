@@ -11,27 +11,60 @@ class LEDS {
 		LEDS();
 		~LEDS();
 		void set(int col, int row, int cell, int x, int y, int spac, bool setAllWhite=false);
-        
+        void clear();
+    
 		bool isClicked(int x, int y);
 		LED * getClicked(int x, int y);
 		void setClicked(int x, int y, ofColor newColor, bool isDragged=false);
 		void setClickedAll();
         int numClicked(int x, int y, ofColor newColor);
     
-        void parseBitmap(unsigned char *pixels);
-		void parseBitmap(ofColor * pixels);
-		void parseBitmap();
+        void setADSR(ofVec3f adsr, unsigned int _min = 0, unsigned int _max = 255);
+        void setADSR(unsigned int _att, unsigned int _dec, unsigned int _rel, unsigned int _min=0, unsigned int _max=255);
+        void trigADSR();
+        void update();
     
+        void parseBitmap(unsigned char *pixels, bool onlyState = false);
+		void parseBitmap(ofColor * pixels, bool onlyState = false);
+		void parseBitmap();
+        
 		ofColor * getBitmap();
 		unsigned char * getBitmapChar();
 		ofColor * bitmap;
 		unsigned char * bitmapChar;
-	
-        void print();
-        void setPosition();
-        void updateColor(ofColor newColor);
+
+        void setSaturation(float sat);
+        void setBrightness(float bright);
+
+        void getPixelsState (string & pixelsState);
+        void setPixelsState (const string pixelsState);
+    
+        string getChainState();
+        void setChainState (const string & chainState);
+        void getChainBitmapChar(unsigned char * chainMap);
+
+        void print(int shape = 0);
+        void setPosition(int x, int y);
+        void updateColor(ofColor newColor, bool updAll = false);
 		void updateColor(ofColor newColor, ofColor inactColor);
-	
+    
+        int getWidth() { return xRight - xLeft; }
+        int getHeight() { return yRight - yLeft; }
+        ofRectangle getRegion() {return ofRectangle(xLeft, yLeft, xRight - xLeft, yRight - yLeft);}
+    
+        void getDmx(ofxDmx &dmx);
+    
+        bool inAddrMode;
+        void setAddrMode(bool is_on) {
+            inAddrMode = is_on;
+        }
+        unsigned int ledsInChain;
+        ofTrueTypeFont myFont;
+    
+        void setupTexture(int w, int h);
+        ofTexture * getTexture(int shape = 0);
+        ofTexture * tex;
+        unsigned char * texPixels;
         LED *leds; // array of LED class
         int ledLastClicked;
         
@@ -45,6 +78,9 @@ class LEDS {
         int xRight;
         int yRight;
         int mSpace;
+        unsigned int ledsNumber;
+
+        ofRectangle region;
 
         ofColor color;
         ofImage matrixImg;

@@ -3,16 +3,19 @@
 #include "ofAppGlutWindow.h"
 
 //========================================================================
-int main( ){
-
-    ofAppGlutWindow window;
-//	ofSetupOpenGL(&window, 1024,768, OF_WINDOW);			// <-------- setup the GL context
-//	ofSetupOpenGL(&window, 1200,768, OF_WINDOW);
-    ofSetupOpenGL(&window, 1200,600, OF_WINDOW);
-//  ofSetupOpenGL(&window, 1440,900, OF_FULLSCREEN);
-	// this kicks off the running of my app
-	// can be OF_WINDOW or OF_FULLSCREEN
-	// pass in width and height too:
-	ofRunApp( new testApp());
-
-}
+#ifdef TARGET_WIN32
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd){
+#else
+    int main(){
+#endif
+        ofAppGlutWindow window; // create a window
+        // set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
+        ofSetupOpenGL(&window, 1000, 650, OF_WINDOW);
+        
+        
+        // this kicks off the running of my app
+        // can be OF_WINDOW or OF_FULLSCREEN
+        // pass in width and height too:
+        ofRunApp(new testApp());
+        
+    }

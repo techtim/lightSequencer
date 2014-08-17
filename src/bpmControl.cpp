@@ -2,7 +2,7 @@
 //  bpmControl.cpp
 //  lightSequencer
 //
-//  Created by Тимофей Тавлинцев on 12.01.12.
+//  Created by Tim TVL on 12.01.12.
 //  Copyright 2012 __MyCompanyName__. All rights reserved.
 //
 
@@ -51,9 +51,7 @@ void bpmControl::draw(){
 //    UpBpm.draw();
 //    DownBpm.draw();
     if (Sync.isOn) BPM = liveAudioAnalysis.bpmEstimate;
-//    BPMstring = "BPM "+ofToString(BPM, 1);
 
-//   	if (BPMstring.size() > 0) verdana.drawString(BPMstring, leftX + width/2, leftY+10);
     if (Sync.isOn && (liveAudioAnalysis.aubioOnsetDetectionVector.size() - liveAudioAnalysis.lastBeatTime) < 10){
 		ofSetHexColor(0xFFFFFF);
 		ofCircle(leftX+width/4+50, leftY + 22, 20);

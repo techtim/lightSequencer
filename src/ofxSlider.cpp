@@ -58,7 +58,6 @@ bool ofxSlider::isClicked(int x, int y)
 {
 	if (y >= leftY && y <= rightY && x >= leftX && x <= rightX)
 	{
-		printf("ofxSlider::isClicked");
 		setValue(x, y);
 		isOn = !isOn;
 		return true;

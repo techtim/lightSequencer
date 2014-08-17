@@ -6,7 +6,7 @@
 #include "ofColor.h"
 #include "colorPicker.h"
 #include "LEDS.h"
-#include "ledSequencer.h"
+#include "Sequencer.h"
 #include "ledPresets.h"
 #include "ofSoundStream.h"
 #include "ofxButton.h"
@@ -14,6 +14,10 @@
 #include "ofSerial.h"
 #include "ofxSlider.h"
 #include "ofxMidi.h"
+#include "ofTexture.h"
+#include "ofxUi.h"
+#include "ofxOsc.h"
+#include "ofxDmx.h"
 
 #include "Generator.h"
 #include "tcpControl.h"
@@ -27,8 +31,63 @@
 #define BUFFER_SIZE 512
 #define NUM_WINDOWS 80
 
-#define PROJECTROOT "/Users/tim/Programming/openFrameworks/oF62/apps/LED/sequenceLed"
+// GUI and CONF
 
+#define PRESETS_NUM 32
+
+//#define SERIAL_NAME "/dev/tty.usbmodemfd121"; //   "/dev/tty.usbmodem411";
+#define SERIAL_NAME "/dev/tty.usbserial-A600clK6";
+
+#define OSCHOST "192.168.0.177"
+#define OSCPORT 10000
+
+//#define PROJECTROOT "/Users/tim/Programming/openFrameworks/oF62/apps/LED/sequenceLed"
+
+class Projector: public ofBaseApp{
+public:
+	~Projector(){
+		cout << "Projector destroyed" << endl;
+	}
+	void setup(int matrixW, int matrixH, int _id){
+        int winWidth = PROJECTOR_W;
+        int winHeight = PROJECTOR_H;
+        win_id = _id;
+        int ctrlLedSize = (winWidth/matrixW) > (winHeight/matrixH) ?
+            winHeight/matrixH : winWidth/matrixW;
+		
+//        ledControl.set(matrixW, matrixH, ctrlLedSize,
+//                       0 + (winWidth-ctrlLedSize*matrixW)/2, 0 + (winHeight-ctrlLedSize*matrixH)/2, 0);
+        //    ledControl.set(matrixW, matrixH, ctrlLedSize,
+        //                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/2, matrixSpace);
+        
+        //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
+        ledControl.setClickedAll();
+//        ledControl.print();
+        		cout << "SETUP:" << ctrlLedSize << endl;
+	}
+    
+    void keyReleased(int key) {
+        //cout << (0x0400) << endl;
+        //cout << (101 | OF_KEY_MODIFIER) << " " << key << endl;
+        if(key=='f') {
+//            if (win_id == win->id) win->windowResized(PROJECTOR_W, PROJECTOR_H);
+//            win->toggleFullscreen();
+        }
+    }
+
+    void setBitmap(ofColor * bitmap) {
+       ledControl.parseBitmap(bitmap);
+    }
+	void draw(){
+//		cout << "CL" << bitmapColor[0].a << endl;
+//        glClearColor(0.0, 0.0, 0.0, 0.0);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        ledControl.print();
+	}
+	
+    LEDS ledControl;
+    int win_id;
+};
 
 class testApp : public ofBaseApp{
 	
@@ -39,6 +98,7 @@ public:
 	void exit();
 	
 	void keyPressed  (int key);
+   	void keyReleased(int key);
 	void mouseDragged(int x, int y, int button);
 	void mousePressed(int x, int y, int button);
 	void windowResized(int w, int h);
@@ -63,6 +123,7 @@ public:
 
     Generator * Gen;
     tcpControl TCP;
+    ofxOscSender oscSender;
 
 	// -- Color --
 	int hueSelect;
@@ -81,6 +142,12 @@ public:
 	
 	LEDS * ledMatrix;
 	LEDS * sequencedMatrix;
+    
+//    Projector projector;
+    int projector_id;
+
+    int display_id;
+    
 	// --Time Sound---
 	
 	ofxButton setupAudioButton;
@@ -88,8 +155,10 @@ public:
     ofxButton Stop;
     ofxButton Start;
     ofxButton ArdButton;
-    ofxButton TcpButton;
-    
+    ofxButton OscButton;
+    ofxButton MidiSelect;
+    ofxButton LedAddrMode;
+
     ofxPortaudioSoundStream inputSoundStream;
 //    ofxPortaudioSoundStream outputSoundStream;    
 	
@@ -128,7 +197,7 @@ public:
 
 	//---SEQ---
 	string stringSetup;
-	ledSequencer * Sequence;
+	Sequencer * Sequence;
 	ofColor selectColor, actColor, inactColor; //params for sequencer
 	
 	unsigned int quarterBeatCounter;
@@ -150,6 +219,8 @@ public:
 	
     ledPresets Presets;
     unsigned int presetsNum;
+    bool presetsShift;
+
 	struct Region{
 		int leftX;
 		int leftY;
@@ -164,24 +235,37 @@ public:
     string serialName;
 	
 	//		--- MIDI ---
+    void setupMidi();
 	void newMessage(ofxMidiEventArgs &args);
 	void newBeat(ofxMidiEventArgs &args);
 	
 	ofxMidiIn midiBeat;
 	ofxMidiIn midiIn;
 	ofxMidiOut midiOut;
-
-	unsigned int midiInPort, midiOutPort;
+    ofxMidiOut midiTapOut;
+    
+	unsigned int midiInPort, midiOutPort, midiTapPort;
 	int midiId;
 	int midiValue;
 	double midiTimestamp;
 	char msg[255];
+    bool bMidiPortClosed;
+    
+    bool abletonCtrl;
 	
 	ofxSlider * Volume;
 	ofxSlider * colorSaturation;
-    ofxSlider mixerSaturation;
+//    ofxSlider mixerSaturation;
+    
+    ofxUISuperCanvas* gui;
+    ofxUIMinimalSlider* mixerSaturation;
+    ofxUIMinimalSlider* mixerBrightness;
+    ofxUILabelToggle* loadColorButton;
+    float mixSaturation;
+    
     unsigned int midiSeqActivationStartCC;
     unsigned int midiSeqBeginCC;
+    unsigned int midiPresetBeginCC;
     unsigned int midiHueControlCC;
     unsigned int midiLedMatrixActivationCC;
 
@@ -190,7 +274,14 @@ public:
 	int beatTmpTime;
 	int beatCounter;
 	//BeatDetect beatDetector;
+    
+    //      ---DMX
+    ofxDmx dmx;
 
+    
+    //      ---OSC
+    ofxOscSender oscSenser;
+    ofxOscReceiver oscReceiver;
 };
 
 

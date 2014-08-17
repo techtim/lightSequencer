@@ -5,5 +5,17 @@ OF_PATH = ../../..
 //THIS HAS ALL THE HEADER AND LIBS FOR OF CORE
 #include "../../../libs/openFrameworksCompiled/project/osx/CoreOF.xcconfig"
 
-OTHER_LDFLAGS = $(OF_CORE_LIBS) 
-HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS)
+//ICONS - NEW IN 0072 
+ICON_NAME_DEBUG = icon-debug.icns
+ICON_NAME_RELEASE = icon.icns
+ICON_FILE_PATH = $(OF_PATH)/libs/openFrameworksCompiled/project/osx/
+
+//IF YOU WANT AN APP TO HAVE A CUSTOM ICON - PUT THEM IN YOUR DATA FOLDER AND CHANGE ICON_FILE_PATH to:
+//ICON_FILE_PATH = bin/data/
+
+//HEADER_AUBIO = "$(OF_PATH)/libs/aubioLibrary/aubioFullOSXUni/include/aubio"
+//HEADER_PORTAUDIO = "$(OF_PATH)/libs/portaudio/include"
+//LIB_PORTAUDIO = "$(OF_PATH)/libs/portaudio/lib/osx/libportaudio.a"
+
+OTHER_LDFLAGS = $(OF_CORE_LIBS) //$(LIB_PORTAUDIO)
+HEADER_SEARCH_PATHS = $(OF_CORE_HEADERS) // $(HEADER_AUBIO) $(HEADER_PORTAUDIO)

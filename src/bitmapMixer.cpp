@@ -46,6 +46,11 @@ void bitmapMixer::setup(unsigned int chanCount, unsigned int cls, unsigned int r
 	outBitmap2 = new ofColor [bitmapLength];
 
 	outBitmapChar = new unsigned char [bitmapLength*3];
+    
+    fbo.allocate(bitmapLength, 1, GL_RGB);
+    fbo.begin();
+        ofClear(0, 0, 0);
+    fbo.end();
 //	matrixImg.allocate(columns, rows, OF_IMAGE_COLOR);
 //    matrixImg.setPosition(0, 0);
 }
@@ -69,49 +74,59 @@ void bitmapMixer::feedBitmap(ofColor * map, unsigned int chanNum, unsigned int v
 
 ofColor * bitmapMixer::outputMixed()
 {
-//	matrixImg.clear();
-//	matrixImg.update();
-	
+
 	ofEnableAlphaBlending();
 
-//	ofSetColor(255, 255, 255, 255);
-//	ofSetColor(0, 0, 0, 120);
-//	ofRect(0, 0, columns, rows);	
-	
-//	glBlendFunc(GL_SRC_COLOR, GL_ONE);
+    //	glBlendFunc(GL_SRC_COLOR, GL_ONE);
 	//glBlendFunc(GL_DST_COLOR, GL_ONE);
 	//glBlendFunc(GL_DST_COLOR,GL_DST_COLOR);
-//printf("_________\n");
-//printf("CREATED OUT\n");
 
-		unsigned char hexCollector;
+    unsigned char hexCollector;
 
-		for (int j=0; j<channelsCount-1; j+=2) {
-
-			for (int i = 0; i < bitmapLength; i++)
-			{
-				// Set Volume with Alpha
-				channel[j].bitmap[i].setHex(channel[j].bitmap[i].getHex(), channel[j].volume);
-				channel[j+1].bitmap[i].setHex(channel[j+1].bitmap[i].getHex(), channel[j+1].volume);
-				
-				(j < 2?
-					Blend(channel[j].bitmap[i], channel[j+1].bitmap[i], outBitmap1[i]) :
-				 	Blend(channel[j].bitmap[i], channel[j+1].bitmap[i], outBitmap2[i])
-				 );
-				
-				//printf("LED%d:%X \n", i,outBitmap[i].getHex());
-			}
-
-		}
+    for (int j=0; j<channelsCount-1; j+=2) {
+        for (int i = 0; i < bitmapLength; i++)
+        {
+            // Set Volume with Alpha
+            channel[j].bitmap[i].setHex(channel[j].bitmap[i].getHex(), channel[j].volume);
+            channel[j+1].bitmap[i].setHex(channel[j+1].bitmap[i].getHex(), channel[j+1].volume);
+            (j < 2?
+                Blend(channel[j].bitmap[i], channel[j+1].bitmap[i], outBitmap1[i]) :
+                Blend(channel[j].bitmap[i], channel[j+1].bitmap[i], outBitmap2[i])
+             );
+            //printf("LED%d:%X \n", i,outBitmap[i].getHex());
+        }
+    }
 	for (int i = 0; i < bitmapLength; i++)
 		Blend(outBitmap1[i], outBitmap2[i], outBitmap[i]), outBitmap[i].setSaturation(saturation);
-
-//printf("---------\n\n");
-
+    
 	ofDisableAlphaBlending();
 	//memcpy(outBitmapChar, matrixImg.getPixels(), bitmapLength*3);
 
 	return outBitmap;
+}
+
+unsigned char * bitmapMixer::outputMixedChar() {
+    ofImage img;
+    img.allocate(bitmapLength, 1, OF_IMAGE_COLOR);
+    
+    ofEnableBlendMode(OF_BLENDMODE_ADD);
+//    img.getPixels();
+    fbo.begin();
+    ofClear(0,0,0,0);
+    for (int j=0; j<channelsCount; j++) {
+        for (int i = 0; i < bitmapLength; i++) {
+            ofColor col = channel[j].bitmap[i];
+            ofSetColor(channel[j].bitmap[i]);
+            ofRect(i,0,1,5);
+        }
+    }
+    fbo.end();
+
+    fbo.readToPixels(pixs);
+    for (int i=0; i<pixs.size();i++) {
+        pixs.getColor(i, 0).setSaturation(saturation);
+    }
+    return pixs.getPixels();
 }
 
 void bitmapMixer::Blend(ofColor c1, ofColor c2,  ofColor & dest)

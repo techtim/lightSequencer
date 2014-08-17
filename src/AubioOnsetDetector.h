@@ -3,6 +3,7 @@
 #define AUBIOONSETDETECTOR_H
 
 #include "aubio.h"
+#include <math.h>
 
 class AubioOnsetDetector
 {

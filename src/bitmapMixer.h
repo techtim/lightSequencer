@@ -22,7 +22,9 @@ class bitmapMixer{
 		void setup(unsigned int chanCount, unsigned int cls, unsigned int rws);
 	
 		void feedBitmap(ofColor * map, unsigned int chanNum, unsigned int vol);
-		ofColor * outputMixed();
+
+        ofColor * outputMixed();
+        unsigned char* outputMixedChar();
 		//ofImage matrixImg;
 		
 		void Blend(ofColor c1, ofColor c2, ofColor & dest );
@@ -45,6 +47,9 @@ class bitmapMixer{
 			unsigned int channelNum;
 			ofColor * bitmap;
 		} * channel;
+    
+        ofFbo fbo;
+        ofPixels pixs;
 };
 
 #endif

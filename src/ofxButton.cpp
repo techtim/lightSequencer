@@ -40,7 +40,7 @@ void ofxButton::setup(int x, int y, int wid, int hei, bool isToggle)
 	rightX = x + width;
 	rightY = y + height;
 	fontSize = 12;
-	myFont.loadFont("../../data/verdana.ttf", fontSize);
+	myFont.loadFont("verdana.ttf", fontSize);
 //    myFont.setLineHeight(height);
 }
 
@@ -59,7 +59,7 @@ void ofxButton::setInactictiveText(string text)
 void ofxButton::setFontSize(unsigned int size)
 {
 	fontSize = size;
-	myFont.loadFont("../../data/verdana.ttf", fontSize);
+	myFont.loadFont("verdana.ttf", fontSize);
 //    myFont.setLineHeight(height);
 //	myFont.setLetterSpacing(1.035);
 }
@@ -114,9 +114,10 @@ void ofxButton::draw() {
 		ofSetColor(75, 75, 75);
         ofRect(0, 0, width, height);
 		ofSetColor(255, 255, 255);
-        myFont.drawString(
-            inactictiveText, int(width - myFont.stringWidth(inactictiveText))/2, int(height + myFont.stringHeight(inactictiveText))/2
-        );
+        if (inactictiveText != "")
+            myFont.drawString(
+                inactictiveText, int(width - myFont.stringWidth(inactictiveText))/2, int(height + myFont.stringHeight(inactictiveText))/2
+            );
 	}
 
 	ofDisableAlphaBlending();
@@ -129,8 +130,12 @@ void ofxButton::setupMidi(unsigned int ident, unsigned int channel, unsigned int
 	midiId = ident;
     midiInPort = inPort, midiOutPort = outPort;
     if (midiInPort != 100) { // do not turn on trick
+//        midiIn.closePort();
         midiIn.openPort(midiInPort);
-        if (midiOutPort != 100) midiOut.openPort(midiOutPort);
+        if (midiOutPort != 100) {
+//            midiOut.closePort();
+            midiOut.openPort(midiOutPort);
+        }
         ofAddListener(midiIn.newMessageEvent, this, &ofxButton::receiveMidi);
     }
 }

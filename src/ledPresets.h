@@ -25,7 +25,7 @@ class ledPresets : public LEDS {
         void setupMidi(unsigned int ident, unsigned int channel=1, unsigned int port = 0);
         
         void save(int presNum, unsigned int genNum, Generator & gen);
-        void load(int presNum, unsigned int genNum, Generator & gen);
+        void load(int presNum, unsigned int genNum, Generator & gen, bool bLoadColor = true);
         void draw();
 
         bool isClicked(int x, int y, bool dragged=false);
@@ -52,21 +52,32 @@ class ledPresets : public LEDS {
         string tmpStr;
     
         struct xmlGenerator {
-            unsigned char * matrix;
-            unsigned char * sequence;
+            string matrix;
+            string sequence;
             unsigned int quant;
+            unsigned int colorPos;
             float att;
             float dec;
             float rel;
             unsigned int fxInv;
             unsigned int fxMir;
+            unsigned int fxMoveRight;
+            unsigned int fxMoveLeft;
+            unsigned int psyOn;
+            unsigned int psySpeed;
+            unsigned int shapeType;
         };
+
     
         struct Preset {
             xmlGenerator generators[4];
             bool is_active;
         } * presets;
-    
+        
+        string chainState;
+    void setChainState (const string & state) { printf("\nSET"); chainState = state; };
+    const string getChainState () { printf("\nGET");return chainState; };
+
         string hexString( unsigned char * byte, unsigned char n)
         {
             char lookup[] = "0123456789abcdef";
@@ -89,8 +100,8 @@ class ledPresets : public LEDS {
             for ( int x = 0; x<stringLength; x+=2 )     
             {         
                 sscanf(&string[x], "%02x", &uChar); 
-                printf("%02x", uChar);
-                hexString[ct++] = uChar;     
+//                printf("%02x", uChar);
+                hexString[ct++] = uChar;
             } 
             
         } 
