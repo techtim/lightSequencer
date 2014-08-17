@@ -9,4 +9,8 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
+
+*.app
+.DS_Store
+
+
