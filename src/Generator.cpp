@@ -52,7 +52,7 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
 //    int matrixPixelWidth = width/2-40/matrixW;
 //    leftY += atBottom ? (matrixCellSize+matrixSpace)*matrixH : 0;
 
-    hueLine.loadImage("../../data/hsv_line.jpeg");
+    hueLine.loadImage("../data/hsv_line.jpeg");
     hueLine.setPosition(leftX+(int)(width-hueLine.width)/2, leftY+5);
 
     ledMatrix.set(matrixW, matrixH, matrixCellSize,
@@ -78,9 +78,6 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
     gui = new ofxUISuperCanvas("v", leftX+width-10, hueLine.yPos+hueLine.height,15,255);
 
     gui->setColorBack(ofColor(25));
-    id%2 == 0 ?
-        gui->setPosition(leftX+width-10, hueLine.yPos+hueLine.height) :
-        gui->setPosition(leftX, hueLine.yPos+hueLine.height);
 
 //    volume = new ofxUIRangeSlider("vol", 0.f, 255.f, &minVolume, &maxVolume, 15, 255,
 //                                  leftX+width-10, hueLine.yPos+hueLine.height);
@@ -135,6 +132,10 @@ void Generator::draw(unsigned int quarterBeatCounter) {
 //    if (atBottom) {
 //        glTranslatef(0, (matrixCellSize+matrixSpace)*matrixH, 0);
 //    }
+    id%2 == 0 ?
+        gui->setPosition(leftX+width-gui->getRect()->width, hueLine.yPos+hueLine.height) :
+        gui->setPosition(leftX, hueLine.yPos+hueLine.height);
+    
     ofSetColor(255, 255, 255);
     hueLine.draw();
 
@@ -168,7 +169,7 @@ void Generator::draw(unsigned int quarterBeatCounter) {
     sequencedMatrix.update();
     sequencedMatrix.setClickedAll();
     sequencedMatrix.print();
-
+    
     outputMatrix.setADSR(Sequencer.getADSR(), minVolume, maxVolume);
     outputMatrix.updateColor(hueLine.color, true);
     outputMatrix.update();

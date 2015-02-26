@@ -9,6 +9,8 @@
 #ifndef lightSequencerGipsy_Config_h
 #define lightSequencerGipsy_Config_h
 
+#define USE_AUDIO 1
+
 #define DISPLAY_W 1000
 #define DISPLAY_H 600
 
@@ -20,18 +22,31 @@
 
 #define PRESETS_NUM 32
 
-#define MATRIX_W 8;
-#define MATRIX_H 5;
+#define MATRIX_W 8
+#define MATRIX_H 5
 
 #define DMX_CHANNELS_IN_PAR 4
 #define DMX_PORT "tty.usbserial-EN133019"
 
 #define MIDI_VOLUME_START_CC 110
 #define MIDI_MIX_SATURATION 103
+#define MIDI_SEQ_PLAY_CC 41
+#define MIDI_SEQ_START_CC 43
 
-#define ABLETON_CTRL true;//true; //false;
+
+#define ABLETON_CTRL false;//true; //false;
 
 #define OSC_PORT_IN 7777
+
+
+enum ledDmxType
+{
+	LED_DMX_RGB = 0,
+	LED_DMX_RGBA = 1,
+    LED_DMX_ARGB = 2,
+    LED_DMX_RGBW = 3,
+    LED_DMX_W = 4
+};
 
 const int DMX_ADDR_MAP[] =
 {

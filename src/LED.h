@@ -27,11 +27,12 @@ public:
     void setNumInChain(unsigned int num) {
         numInChain = num;
     }
-    
-    void setDmxAddress(unsigned int num) {
-        dmxStartAddress = num;
-    }
-    
+
+    void setDmxAddress(unsigned int num);
+    void setupDmxGui();
+    void setEdit(bool _bedit);
+    bool isEdit();
+
     void getNumInChain() {
         return numInChain;
     }
@@ -68,12 +69,20 @@ public:
     
     ofColor color, dmxColor, alphaColor;
     
-    ofxUISuperCanvas *gui;
+    ofxUISuperCanvas* gui;
+    ofxUINumberDialer* dmxAddr;
+    ofxUIDropDownList* typesList;
+    
 	void guiEvent(ofxUIEventArgs &e);
 
     void showGui(bool bShow);
     bool bShowGui;
+    bool bDmxSetup;
+    bool bEdit;
+
     unsigned int dmxStartAddress;
+    ledDmxType dmxType;
+    float fDmxAddress;
 };
 
 #endif

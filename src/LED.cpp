@@ -7,9 +7,11 @@ LED::LED()
 //    ADSRvalue = 0;
 //    ADSRoffset = 0;
     bShowGui = false;
+    bDmxSetup = false;
     minValue = 0;
     maxValue = 255;
-    ADSRoffset=0;
+    ADSRoffset = 0;
+    dmxStartAddress = 0;
 }
 
 LED::LED(int xL, int yL, int xR, int yR)
@@ -17,17 +19,8 @@ LED::LED(int xL, int yL, int xR, int yR)
     xLeft = xL, yLeft = yL, xRight = xR, yRight = yR;
     isSelected = false;
     
-    dmxStartAddress = 1 + numInChain * DMX_CHANNELS_IN_PAR;
-    gui = new ofxUISuperCanvas("led-"+ofToString(dmxStartAddress));
-//    gui->setGlobalSliderHeight(5);
-//
-//    gui->addNumberDialer("DMX CHANNEL", 1, 512, dmxStartAddress, 3)->setDrawOutline(true);
-//    gui->loadSettings("led-"+ofToString(dmxStartAddress));
-//    gui->autoSizeToFitWidgets();
-////    gui->disableAppDrawCallback();
-////    gui->setAutoUpdate(true);
-//    gui->setPosition(ofGetWidth()/2-gui->getRect()->width/2, ofGetHeight()/2);
-    gui->disable();
+//    dmxStartAddress = 1 + numInChain * DMX_CHANNELS_IN_PAR;
+
 };
 
 void LED::position(int xL, int yL, int xR, int yR)
@@ -76,28 +69,140 @@ void LED::update(){
 bool LED::isClicked(int x, int y) {
     if (y <= yRight && y >= yLeft && x <= xRight && x >= xLeft) {
         isSelected = (isSelected ? false : true);
-        printf("isSelected=%i; num=%i",isSelected, num);
+//        printf("isSelected=%i; num=%i",isSelected, num);
         //        printf("X=%i; Y=%i",x, y);
         return true;
     }
     return false;
 };
 
+void LED::setEdit(bool _bEdit){
+    bEdit = _bEdit;
+}
+
+bool LED::isEdit() {
+    return bEdit;
+}
+
+void LED::setDmxAddress(unsigned int num) {
+    
+    dmxStartAddress = num;
+    setupDmxGui();
+}
+
+void LED::setupDmxGui() {
+    gui = new ofxUISuperCanvas("led-"+ofToString(dmxStartAddress),OFX_UI_FONT_SMALL);
+    //    gui->setGlobalSliderHeight(5);
+
+    fDmxAddress = static_cast<float>(dmxStartAddress);
+    dmxAddr = new ofxUINumberDialer(0, 512, &fDmxAddress, 0, "addr", OFX_UI_FONT_SMALL);
+    dmxType = LED_DMX_RGBA;
+//    gui->addNumberDialer("addr", 1, 512, dmxStartAddress, 3)->setDrawOutline(true);
+    gui->addWidgetDown(dmxAddr);
+    vector<string> types;
+    types.push_back("RGB");
+    types.push_back("RGB+A");
+    types.push_back("A+RGB");
+    types.push_back("RGB+W");
+    types.push_back("W");
+
+    typesList = new ofxUIDropDownList(70, "RGB+A", types, OFX_UI_FONT_SMALL);
+    typesList->activateToggle("RGB+A");
+//    typesList->setShowCurrentSelected(true);
+    gui->addWidgetDown(typesList);
+    
+//    gui->loadSettings("led-"+ofToString(dmxStartAddress));
+    gui->autoSizeToFitWidgets();
+    gui->setWidth(75);
+//    gui->setAutoUpdate(true);
+    gui->setPosition(ofGetWidth()/2-gui->getRect()->width/2, ofGetHeight()/2);
+    gui->disable();
+
+    ofAddListener(gui->newGUIEvent, this, &LED::guiEvent);
+    bDmxSetup = true;
+}
+
 void LED::showGui(bool bShow) {
+    if (!bDmxSetup) return;
     bShowGui = bShow;
     bShowGui ? gui->enable() : gui->disable();
 }
 
 
 void LED::getDmx(ofxDmx &dmx) {
-    
-    if (dmxColor != color) {
+    if (dmxStartAddress == 0) return;
 
-        dmx.setLevel(dmxStartAddress+0, color.r);
-        dmx.setLevel(dmxStartAddress+1, color.g);
-        dmx.setLevel(dmxStartAddress+2, color.b);
-        dmx.setLevel(dmxStartAddress+3, 255);
+    if (dmxColor != color) {
+        switch (dmxType) {
+            case LED_DMX_RGB:
+                dmx.setLevel(dmxStartAddress+0, color.r);
+                dmx.setLevel(dmxStartAddress+1, color.g);
+                dmx.setLevel(dmxStartAddress+2, color.b);
+                break;
+            case LED_DMX_RGBA:
+                dmx.setLevel(dmxStartAddress+0, color.r);
+                dmx.setLevel(dmxStartAddress+1, color.g);
+                dmx.setLevel(dmxStartAddress+2, color.b);
+                dmx.setLevel(dmxStartAddress+3, color.a);
+                break;
+            case LED_DMX_ARGB:
+                dmx.setLevel(dmxStartAddress+0, color.a);
+                dmx.setLevel(dmxStartAddress+1, color.r);
+                dmx.setLevel(dmxStartAddress+2, color.g);
+                dmx.setLevel(dmxStartAddress+3, color.b);
+                break;
+            case LED_DMX_RGBW:
+                dmx.setLevel(dmxStartAddress+0, color.r);
+                dmx.setLevel(dmxStartAddress+1, color.g);
+                dmx.setLevel(dmxStartAddress+2, color.b);
+                dmx.setLevel(dmxStartAddress+3, 0);
+                break;
+            case LED_DMX_W:
+                dmx.setLevel(dmxStartAddress+0, ADSRvalue);
+                break;
+
+            default:
+                break;
+        }
             //            ofLog(OF_LOG_VERBOSE, paramNames[i]+" = "+ofToString(dmxValues[i]));
         dmxColor = color;
+    }
+}
+
+void LED::guiEvent(ofxUIEventArgs &e){
+
+    if(e.widget == typesList){
+//        if(typesList->isOpen()){
+////			typesList->setVisible(false);
+//        }
+//        else {
+            typesList->setVisible(true);
+            if(typesList->getSelected().size() > 0){
+                string selectedTypetName = typesList->getSelected()[typesList->getSelected().size()-1]->getName();
+                if(selectedTypetName == "RGB"){
+    //                shouldCreateNewProject = true;
+                    dmxType = LED_DMX_RGB;
+                }
+                else if(selectedTypetName == "RGB+A"){
+                    dmxType = LED_DMX_RGBA;
+                }
+                else if(selectedTypetName == "A+RGB"){
+                    dmxType = LED_DMX_ARGB;
+                }
+                else if(selectedTypetName == "RGB+W"){
+                    dmxType = LED_DMX_RGBW;
+                }
+                else if(selectedTypetName == "W"){
+                    dmxType = LED_DMX_W;
+                }
+                typesList->setName(selectedTypetName);
+                typesList->clearSelected();
+                typesList->close();
+            }
+//        }
+    }
+    else if(e.widget == dmxAddr) {
+        dmxStartAddress = dmxAddr->getValue();
+//        gui->set"led-"+ofToString(dmxStartAddress
     }
 }

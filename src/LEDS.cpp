@@ -2,7 +2,7 @@
 
 LEDS::LEDS()
 {
-    ;
+    bGuiActive = true;
 };
 
 LEDS::~LEDS()
@@ -53,7 +53,6 @@ void LEDS::set(int col, int row, int cell, int x, int y, int spac, bool setAllWh
 
     inAddrMode = false;
     ledsInChain = 0;
-    myFont.loadFont("../../data/verdana.ttf", 10);
 
     setPosition(xLeft, yLeft);
 };
@@ -73,7 +72,8 @@ void LEDS::setPosition(int x, int y)
 		leds[count].num = count;
 		leds[count].numColumn = cell;
 		leds[count].numRow = row;
-        leds[count].setDmxAddress(DMX_ADDR_MAP[count]);
+//        leds[count].setDmxAddress(DMX_ADDR_MAP[count]);
+//        leds[count].gui->setPosition(<#int x#>, <#int y#>)
 		leds[count].position(ledXLeft, ledYLeft, ledXLeft + cellSize, ledYLeft + cellSize);
 
 		//printf("%i PIXEL: XLeft = %i , YLeft = %i \n", count, ledXLeft, ledYLeft);
@@ -156,7 +156,7 @@ void LEDS::update()
         leds[i].update();
 }
 
-void LEDS::print(int shape)
+void LEDS::print(bool with_alpha)
 {
     int x = xLeft;
     int y = yLeft;
@@ -165,7 +165,6 @@ void LEDS::print(int shape)
     float parallW = cellSize;
     float parallMove = parallH/sin(70.0f*PI/180)*cos(70.0f*PI/180);
     float parallStartX = xLeft+(parallW)*columns/4;
-    if (shape == 1) x = parallStartX;
 
     if (midiActive) {
         ofSetColor(150, 150, 150);
@@ -187,6 +186,8 @@ void LEDS::print(int shape)
     {
         for (int j = 0; j < columns; j++)
         {
+            ofSetColor(0,0,0);
+            ofRect(x, y, cellSize, cellSize);
             if (leds[counter].isSelected == true)
             {
 //                ofSetColor(leds[counter].color.r, leds[counter].color.g, leds[counter].color.b);
@@ -196,45 +197,20 @@ void LEDS::print(int shape)
             {
                 ofSetColor(0,0,0);
             }
-
-            switch (shape) {
-                case 0:
-                    ofRect(x, y, cellSize, cellSize);
-                    if (inAddrMode) {
-                        ofSetColor(0,150,200);
-                        ofDrawBitmapString( ofToString(leds[counter].dmxStartAddress), x+cellSize/2, y+cellSize/2 );
-                    }
-                    x += cellSize + mSpace;
-                    break;
-                case 1:
-//                    ofFill();
-//                    ofBeginShape();
-//                        ofVertex(x+parallMove,y);
-//                        ofVertex(x+parallMove+parallW,y);
-//                        ofVertex(x+parallW,y+parallH);
-//                        ofVertex(x,y+parallH);
-//                    ofEndShape();
-//                    x += parallW + mSpace;
-//                    break;
-
-                    break;
+            
+            ofRect(x, y, cellSize, cellSize);
+            if (inAddrMode) {
+                ofSetColor(0,150,200);
+                ofDrawBitmapString( ofToString(leds[counter].dmxStartAddress), x+cellSize/3, y+cellSize/2 );
             }
-//            x += cellSize + mSpace;
+            x += cellSize + mSpace;
+    
             counter++;
         }
 
-        switch (shape) {
-            case 0:
-                y += cellSize + mSpace;
-                x = xLeft;
-                break;
-            case 1:
-                y += parallH + mSpace;
-                x = parallStartX-parallMove*(i+1);
-                break;
-                
-                break;
-        }
+        y += cellSize + mSpace;
+        x = xLeft;
+
     }
     
 //    ofNoFill();
@@ -280,12 +256,7 @@ ofTexture * LEDS::getTexture(int shape)
                     ofRect(x, y, cellSize, cellSize);
                     break;
                 case 1:
-//                    ofTriangle(x, y, x+cellSize, y, x+cellSize/2, y+cellSize);
-//                    printf("%fx%d - %fx%d - %dx%d - %dx%d \n",
-//                           x+parallH/sin(70), y,
-//                           x+parallH/sin(70)+cellSize,y,
-//                           x+cellSize,y+cellSize,
-//                           x,y+cellSize);
+
                     ofFill();
                     ofBeginShape();
                         ofVertex(x+parallH/sin(70),y);
@@ -322,21 +293,37 @@ bool LEDS::isClicked(int x, int y)
 
 void LEDS::setClicked(int x, int y, ofColor newColor, bool isDragged)
 {
-	for (unsigned int i = 0; i < columns * rows; i++)
-		if (leds[i].isClicked(x, y)) 
-		{
-			if (leds[i].isSelected) {
-                leds[i].color = newColor;
-                changedBitmap = true;
-                if (inAddrMode) leds[i].setNumInChain(++ledsInChain);
+	if (inAddrMode)
+        for (unsigned int i = 0; i < columns * rows; i++) {
+            if (leds[i].isEdit())
+                 bGuiActive = leds[i].typesList->isOpen() ? false : true;
+        }
+    
+    if (bGuiActive)
+        for (unsigned int i = 0; i < columns * rows; i++) {
+            if (leds[i].isClicked(x, y))
+            {
+                if (leds[i].isSelected) {
+                    leds[i].color = newColor;
+                    changedBitmap = true;
+                }
+                inAddrMode? leds[i].setEdit(true) : leds[i].setEdit(false);
+                if (ledLastClicked == i && isDragged) leds[i].isClicked(x, y);
+                ledLastClicked = i;
             } else {
-                if (inAddrMode) leds[i].setNumInChain(0);
+                leds[i].setEdit(false);
             }
-            
-            if (ledLastClicked == i && isDragged) leds[i].isClicked(x, y);
-            ledLastClicked = i;
-            break;
-		}
+        }
+
+    if (inAddrMode)
+        for (unsigned int i = 0; i < columns * rows; i++) {
+            if (leds[i].isEdit()) {
+                leds[i].gui->setPosition(xLeft, yLeft-leds[i].gui->getRect()->height);
+                leds[i].showGui(true);
+            } else {
+                leds[i].showGui(false);
+            }
+        }
 }
 
 int LEDS::numClicked(int x, int y, ofColor newColor)
@@ -464,7 +451,7 @@ string LEDS::getChainState () {
 }
 
 void LEDS::setChainState (const string & chainState) {
-    printf("\n !!! \n");
+//    printf("\n !!! \n");
     int cntr = 0, chain_ctr = 0;
     for (int i = 0; i < rows*columns*3; i+=3)
     {
@@ -528,6 +515,14 @@ void LEDS::receiveMidi(ofxMidiEventArgs &args){
     }
 }
 
+void LEDS::setupDmx(){
+    
+    
+    for (int i = 0; i < columns * rows; i++)
+    {
+        leds[i].setDmxAddress(DMX_ADDR_MAP[i]);
+    }
+}
 
 void LEDS::getDmx(ofxDmx &dmx) {
     for (int i = 0; i < rows*columns; i++)
@@ -535,4 +530,58 @@ void LEDS::getDmx(ofxDmx &dmx) {
         leds[i].getDmx(dmx);
     }
     
+}
+
+void LEDS::saveDmxConfig() {
+
+    ofxXmlSettings *XML = new ofxXmlSettings();
+    for (int i = 0; i < rows*columns; i++)
+    {
+        int index = XML->addTag("LED");
+        if(XML->pushTag("LED", index))
+            for(vector<ofxUIWidget *>::iterator it = leds[i].gui->getWidgets().begin(); it != leds[i].gui->getWidgets().end(); ++it)
+            {
+//                if((*it)->hasState())
+//                {
+                    int index = XML->addTag("Widget");
+                    if(XML->pushTag("Widget", index))
+                    {
+                        XML->setValue("Kind", (*it)->getKind(), 0);
+                        XML->setValue("Name", (*it)->getName(), 0);
+                        (*it)->saveState(XML);
+                    }
+                    XML->popTag();
+//                }
+            }
+            XML->popTag();
+    }
+    XML->saveFile("dmxConfig.xml");
+    delete XML;
+}
+
+void LEDS::loadDmxConfig() {
+    ofxXmlSettings *XML = new ofxXmlSettings();
+    XML->loadFile("dmxConfig.xml");
+    int ledTags = XML->getNumTags("LED");
+    for (int led_num=0; led_num<ledTags; led_num++) {
+        if (led_num == rows*columns) break;
+
+        XML->pushTag("LED", led_num);
+        int widgetTags = XML->getNumTags("Widget");
+        for(int i = 0; i < widgetTags; i++)
+        {
+            XML->pushTag("Widget", i);
+            string name = XML->getValue("Name", "NULL", 0);
+            ofxUIWidget *widget = leds[led_num].gui->getWidget(name);
+            if(widget != NULL && widget->hasState())
+            {
+                widget->loadState(XML);
+//                if(bTriggerWidgetsUponLoad){
+//                    triggerEvent(widget);
+//                }
+            }
+            XML->popTag();
+        }
+        XML->popTag();
+    }
 }

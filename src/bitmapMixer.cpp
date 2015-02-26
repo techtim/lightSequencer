@@ -125,6 +125,7 @@ unsigned char * bitmapMixer::outputMixedChar() {
     fbo.readToPixels(pixs);
     for (int i=0; i<pixs.size();i++) {
         pixs.getColor(i, 0).setSaturation(saturation);
+        pixs.getColor(i, 0).setBrightness(brightness);
     }
     return pixs.getPixels();
 }

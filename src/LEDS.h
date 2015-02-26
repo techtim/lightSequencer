@@ -43,7 +43,7 @@ class LEDS {
         void setChainState (const string & chainState);
         void getChainBitmapChar(unsigned char * chainMap);
 
-        void print(int shape = 0);
+        void print(bool with_alpha = true);
         void setPosition(int x, int y);
         void updateColor(ofColor newColor, bool updAll = false);
 		void updateColor(ofColor newColor, ofColor inactColor);
@@ -52,14 +52,16 @@ class LEDS {
         int getHeight() { return yRight - yLeft; }
         ofRectangle getRegion() {return ofRectangle(xLeft, yLeft, xRight - xLeft, yRight - yLeft);}
     
+        void setupDmx();
         void getDmx(ofxDmx &dmx);
+        void saveDmxConfig();
+        void loadDmxConfig();
     
         bool inAddrMode;
         void setAddrMode(bool is_on) {
             inAddrMode = is_on;
         }
         unsigned int ledsInChain;
-        ofTrueTypeFont myFont;
     
         void setupTexture(int w, int h);
         ofTexture * getTexture(int shape = 0);
@@ -79,7 +81,9 @@ class LEDS {
         int yRight;
         int mSpace;
         unsigned int ledsNumber;
-
+    
+        bool bGuiActive;
+    
         ofRectangle region;
 
         ofColor color;

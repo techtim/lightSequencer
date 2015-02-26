@@ -47,7 +47,7 @@ void Sequencer::setup(
     sliders = new ofxUISuperCanvas("sliders", 0,0,0,10);
     sliders->setWidgetFontSize(OFX_UI_FONT_SMALL);
     sliders->setFontSize(OFX_UI_FONT_SMALL, 5);
-    sliders->setPosition(xLeft, slidersOffset-10);
+    sliders->setPosition(xLeft-cellSize, slidersOffset-10);
 
     attSlider = new ofxUIMinimalSlider("att", 0, 255, &a, getWidth()+cellSize, 10);
     decSlider = new ofxUIMinimalSlider("dec", 0, 255, &d, getWidth()+cellSize, 10);
@@ -200,7 +200,7 @@ void Sequencer::draw()
     int y = yLeft;
     int counter = 0;
 
-    sliders->setPosition(xLeft, slidersOffset-10);
+    sliders->setPosition(xLeft-cellSize, slidersOffset-10);
     buttons->setPosition(buttonsPos.x, buttonsPos.y);
 
     if (midiActive) {

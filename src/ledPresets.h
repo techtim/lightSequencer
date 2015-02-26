@@ -67,7 +67,6 @@ class ledPresets : public LEDS {
             unsigned int psySpeed;
             unsigned int shapeType;
         };
-
     
         struct Preset {
             xmlGenerator generators[4];

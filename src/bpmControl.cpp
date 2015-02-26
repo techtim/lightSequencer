@@ -17,7 +17,7 @@ bpmControl::bpmControl() {
     midiUpBpmCC = 61;
     midiDownBpmCC = 62;
     
-    verdana.loadFont("../../data/verdana.ttf", 14, true, true);
+    verdana.loadFont("../data/verdana.ttf", 14, true, true);
 	verdana.setLineHeight(14.0f);
 	verdana.setLetterSpacing(1.035);
 }

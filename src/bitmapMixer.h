@@ -32,6 +32,10 @@ class bitmapMixer{
             saturation = sat;
         };
 
+        void setBrightness(unsigned int brt=255){
+            brightness = brt;
+        };
+
 		ofColor * outBitmap;
 		ofColor * outBitmap1;
 		ofColor * outBitmap2;
@@ -41,7 +45,8 @@ class bitmapMixer{
 		unsigned int rows;
 		unsigned int channelsCount;
         unsigned int saturation;
-    
+        unsigned int brightness;
+
 		struct Channel {
 			unsigned int volume;
 			unsigned int channelNum;

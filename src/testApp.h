@@ -1,8 +1,10 @@
 #ifndef _TEST_APP
 #define _TEST_APP
 
-
 #include "ofMain.h"
+
+//#include "MainMenuController.h"
+
 #include "ofColor.h"
 #include "colorPicker.h"
 #include "LEDS.h"
@@ -12,7 +14,6 @@
 #include "ofxButton.h"
 #include "bitmapMixer.h"
 #include "ofSerial.h"
-#include "ofxSlider.h"
 #include "ofxMidi.h"
 #include "ofTexture.h"
 #include "ofxUi.h"
@@ -114,6 +115,10 @@ public:
     void setInputDevice(int i);
 //	void setOutputDevice(int i);
 	
+    void toggleAddressMode();
+    
+//    MainMenuController* mainMenuController;
+    
 	// -- Main --
 	unsigned int frameRate;
 	unsigned int frameCount;
@@ -149,16 +154,6 @@ public:
     int display_id;
     
 	// --Time Sound---
-	
-	ofxButton setupAudioButton;
-    ofxButton Play;
-    ofxButton Stop;
-    ofxButton Start;
-    ofxButton ArdButton;
-    ofxButton OscButton;
-    ofxButton MidiSelect;
-    ofxButton LedAddrMode;
-
     ofxPortaudioSoundStream inputSoundStream;
 //    ofxPortaudioSoundStream outputSoundStream;    
 	
@@ -230,9 +225,9 @@ public:
 	
 	Region mixerRegion;
 	//		--- LED ---
-	ofSerial Arduino;
-	bool enableArduino;
-    string serialName;
+//	ofSerial Arduino;
+//	bool enableArduino;
+//    string serialName;
 	
 	//		--- MIDI ---
     void setupMidi();
@@ -252,27 +247,37 @@ public:
     bool bMidiPortClosed;
     
     bool abletonCtrl;
-	
-	ofxSlider * Volume;
-	ofxSlider * colorSaturation;
-//    ofxSlider mixerSaturation;
+
+    unsigned int midiSeqActivationStartCC;
+    unsigned int midiSeqBeginCC;
+    unsigned int midiPresetBeginCC;
+    unsigned int midiHueControlCC;
+    unsigned int midiLedMatrixActivationCC;
+    
+    // --- GUI ---
+
+    void guiEvent(ofxUIEventArgs &e);
     
     ofxUISuperCanvas* gui;
     ofxUIMinimalSlider* mixerSaturation;
     ofxUIMinimalSlider* mixerBrightness;
     ofxUILabelToggle* loadColorButton;
     float mixSaturation;
+    float mixBrightness;
     
-    unsigned int midiSeqActivationStartCC;
-    unsigned int midiSeqBeginCC;
-    unsigned int midiPresetBeginCC;
-    unsigned int midiHueControlCC;
-    unsigned int midiLedMatrixActivationCC;
+    ofxUIMultiImageToggle* Play;
+    ofxUIMultiImageButton* Start;
 
-	//		---BPM
+    ofxUILabelToggle* OscButton;
+    ofxUILabelToggle* LedAddrMode;
+    ofxUILabelToggle* MidiSelect;
+
+	//	--- BPM ---
 	int beatStartTime;
 	int beatTmpTime;
 	int beatCounter;
+    
+    bool bPlaying;
 	//BeatDetect beatDetector;
     
     //      ---DMX

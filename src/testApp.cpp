@@ -11,74 +11,62 @@ void testApp::setup(){
     
     frameRate = 60;
     ofSetFrameRate(frameRate);
-
+    ofSetDataPathRoot("../Resources/data/");
+    
 	ofBackground(40,40,40);
-//    ofBackground(255,255,255);
+    ofSetVerticalSync(true);
+    ofEnableSmoothing();
     ofSetCircleResolution(40);    
 
+    ofSetEscapeQuitsApp( false );
+    
+//    mainMenuController = nil;
+//    
+//    mainMenuController = [[MainMenuController alloc] init];
+    
 	winWidth = ofGetWidth();
 	winHigh = ofGetHeight();
 	
     //---MIDI---
     abletonCtrl = ABLETON_CTRL;
     
-       //---Buttons---
-	Play.setup(winWidth/2 - 50, 0, 100, 30, true);
-	Play.setActictiveText("PLAY");
-    Play.setInactictiveText("STOP");
-    Play.setFontSize(14);
-    
-    Start.setup(winWidth/2 - 25, 40, 50, 30, false);
-    Start.setActictiveText("start");
-    Start.setFontSize(12);
 
-//    ArdButton.setup(winWidth/2 - 95, 60, 50, 30, true);
-//    ArdButton.setActictiveText("Serial");
-//    ArdButton.setFontSize(12);
-    OscButton.setup(winWidth/2 + 40, 60, 50, 30, true);
-    OscButton.setActictiveText("OSC");
-    OscButton.setFontSize(12);
-    
-//    MidiSelect.setup(winWidth/2 - 150, 0, 50, 30, true);
-//	MidiSelect.setActictiveText("Ableton");
-//    MidiSelect.setInactictiveText("Kontrol");
-//    MidiSelect.setFontSize(10);
-    
-    LedAddrMode.setup(winWidth/2 - 95, 60, 50, 30, true);
-    LedAddrMode.setActictiveText("ADDR ON");
-    LedAddrMode.setInactictiveText("ADDR OFF");
-    LedAddrMode.setFontSize(10);
 	//---BPM
     leftAudioIn.assign(BUFFER_SIZE, 0.0);
 	rightAudioIn.assign(BUFFER_SIZE, 0.0);
     
     inputDeviceID = 0;//the mic(0)/line input(1) of a mac book pro
 	outputDeviceID = 2;//the headphones out of a macbook pro
+#ifdef USE_AUDIO 
 	setInputDevice(inputDeviceID);//includes calling the setup routine etc
 	ofAddListener(inputSoundStream.audioReceivedEvent, this, &testApp::audioInputListener);
+#endif
 
-    verdana14.loadFont("../../data/verdana.ttf", 14, true, true);
+    verdana14.loadFont("../data/verdana.ttf", 14, true, true);
 	verdana14.setLineHeight(14.0f);
 	verdana14.setLetterSpacing(1.035);
     
-    verdana30.loadFont("../../data/verdana.ttf", 14, true, true);
+    verdana30.loadFont("../data/verdana.ttf", 14, true, true);
 	verdana30.setLineHeight(14.0f);
 	verdana30.setLetterSpacing(1.035);
   
+    
 
 	//---Layout
 	controllersNum = 4;
 	controllersWidth = 360;
     controllersHeight= 300;
-    mixerRegion.leftX = controllersWidth;
+    unsigned int cntrlOffsetX = 5;
+    
+    mixerRegion.leftX = controllersWidth+cntrlOffsetX+5;
 	mixerRegion.leftY = 0;
-	mixerRegion.rightX = ofGetWidth()-controllersWidth;
+	mixerRegion.rightX = ofGetWidth()-controllersWidth-5;
 	mixerRegion.rightY = winHigh;
 
 	region = new Region[controllersNum];
-	region[0].leftX= 10;
+	region[0].leftX= cntrlOffsetX;
 	region[0].leftY= 0;
-	region[2].leftX = 10;
+	region[2].leftX = cntrlOffsetX;
 	region[2].leftY = winHigh-controllersHeight-20;
 	region[1].leftX = mixerRegion.rightX;
 	region[1].leftY = 0;
@@ -94,19 +82,6 @@ void testApp::setup(){
 	region[3].rightX = winWidth;
 	region[3].rightY = winHigh;
 	
-    bpmCtrl.setup(
-        mixerRegion.leftX, mixerRegion.leftY + 100,
-        mixerRegion.rightX - mixerRegion.leftX, mixerRegion.leftY+50
-    );
-
-//########################
-    //---LED
-    serialName = SERIAL_NAME;
-//    serialName = "/dev/tty.usbmodem411";
-	Arduino.setup(serialName, 115200);
-    enableArduino = false;
-//	Arduino.setVerbose(true);
-	Arduino.flush();
     
 	//---Matrix---
     matrixW = MATRIX_W;
@@ -115,12 +90,6 @@ void testApp::setup(){
     matrixSpace = 2;
 //    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
     matrixCellSize=50;
-    
-//    projector.setup(matrixW, matrixH, projector_id);
-
-
-    int syphonLedSize = // (PROJECTOR_W/matrixW) > (PROJECTOR_H/matrixH) ?
-    PROJECTOR_H/matrixH;// : PROJECTOR_W/matrixW;
     
 //########################
 	//---Color---
@@ -168,15 +137,21 @@ void testApp::setup(){
 	{
 		Gen[i].setup(region[i].leftX, region[i].leftY, controllersWidth, controllersHeight, matrixW, matrixH, (i>1?true:false), i);
         Gen[i].setActive(false);
-//		colorSaturation[i].setup(region[i].leftX+matrixCellSize/2, region[i].leftY+10, matrixCellSize/2, 50, false, 0, 255);		
     }
 
-//    int ctrlLedSize = (mixerRegion.rightX-mixerRegion.leftX-40)/matrixW-matrixSpace;
-    int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/3/matrixH - matrixSpace;
-    ctrlLedSize = matrixH < 2 ? (mixerRegion.rightX-mixerRegion.leftX-20)/matrixW-matrixSpace : ctrlLedSize;
-//    ctrlLedSize = matrixH < 2 ? (mixerRegion.rightX-mixerRegion.leftX)/matrixW-matrixSpace : ctrlLedSize;
+    bpmCtrl.setup(
+                  mixerRegion.leftX, mixerRegion.leftY + 50,
+                  mixerRegion.rightX - mixerRegion.leftX, mixerRegion.leftY+50
+                  );
+
     int mixerWidth = mixerRegion.rightX - mixerRegion.leftX;
-//	ledControl.set(matrixW, matrixH, ctrlLedSize, 
+
+    int ctrlLedSize = (mixerRegion.rightY-mixerRegion.leftY)/3/matrixH - matrixSpace;
+    
+    ctrlLedSize = ctrlLedSize > mixerWidth/matrixW - matrixSpace ?
+         mixerWidth/matrixW-matrixSpace : ctrlLedSize;
+
+//	ledControl.set(matrixW, matrixH, ctrlLedSize,
 //                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
 //    ledControl.set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
 	ledControl.set(matrixW, matrixH, ctrlLedSize,
@@ -186,36 +161,64 @@ void testApp::setup(){
 
     //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
 	ledControl.setClickedAll();
+    ledControl.setupDmx();
 //    ledControl.setupTexture(DISPLAY_W, DISPLAY_H);
 
 	Mixer = new bitmapMixer;
 	Mixer->setup(controllersNum, matrixW, matrixH);
     
-//    mixerSaturation.setup(mixerRegion.leftX+(mixerRegion.rightX-mixerRegion.leftX)/2-255/2, 200, 255, 20, true, 0, 255);
+    //---Buttons---
     
     gui = new ofxUISuperCanvas("");
-    mixerSaturation = new ofxUIMinimalSlider("saturate", 0, 255, &mixSaturation, mixerWidth-35, 10, mixerRegion.leftX+30,200);
+    
+    bPlaying = false;
+    Play = new ofxUIMultiImageToggle(mixerRegion.leftX+mixerWidth/2-32, 10, 32, 32, &bPlaying, "GUI/play_.png", "PLAYPAUSE");
+    Play->setLabelVisible(false);
+    gui->addWidget(Play);
+    
+    Start = new ofxUIMultiImageButton(mixerRegion.leftX+mixerWidth/2, 10, 32, 32, false, "GUI/start_.png", "START");
+//    Start->setLabelVisible(false);
+    gui->addWidget(Start);
+    
+    //    ArdButton.setup(winWidth/2 - 95, 60, 50, 30, true);
+    //    ArdButton.setActictiveText("Serial");
+    //    ArdButton.setFontSize(12);
+    
+    //    MidiSelect.setup(winWidth/2 - 150, 0, 50, 30, true);
+    //	MidiSelect.setActictiveText("Ableton");
+    //    MidiSelect.setInactictiveText("Kontrol");
+    //    MidiSelect.setFontSize(10);
+    
+    LedAddrMode = new ofxUILabelToggle("Addr Mode", false, 70, 10, Start->getRect()->x+Start->getRect()->width+10, 20, OFX_UI_FONT_SMALL );
+
+    gui->addWidget(LedAddrMode);
+    
+    OscButton = new ofxUILabelToggle("OSC", false, 30, 10, mixerRegion.leftX+60, 60 );
+//    gui->addWidget(OscButton);
+    
+    mixSaturation = 0.f;
+    mixerSaturation = new ofxUIMinimalSlider("saturate", 0, 255, &mixSaturation, mixerWidth-30, 10, mixerRegion.leftX+15,110);
     gui->addWidget(mixerSaturation);
     
-    mixerBrightness = new ofxUIMinimalSlider("bright", 0, 255, &mixSaturation, mixerWidth-35, 10, mixerRegion.leftX+30,180);
+    mixBrightness = 255.f;
+    mixerBrightness = new ofxUIMinimalSlider("bright", 0, 255, &mixBrightness, mixerWidth-30, 10, mixerRegion.leftX+15,140);
     gui->addWidget(mixerBrightness);
     
 //    (string _name, bool _value, float w = 0, float h = 0, float x = 0, float y = 0, int _size = OFX_UI_FONT_MEDIUM
 
-    loadColorButton = new ofxUILabelToggle("load color", true, (mixerWidth-35)/2, 10, mixerRegion.leftX+(mixerWidth-35)/3, 160 );
+    loadColorButton = new ofxUILabelToggle("load color", true, (mixerWidth-35)/2, 10, mixerRegion.leftX+(mixerWidth-35)/3, ledControl.yRight+10, OFX_UI_FONT_SMALL);
     gui->addWidget(loadColorButton);
     
     gui->setColorBack(ofColor(0,0,0,0));
     gui->setPosition(0, 0);
-    //    volume = new ofxUIRangeSlider("vol", 0.f, 255.f, &minVolume, &maxVolume, 15, 255,
-    //                                  leftX+width-10, hueLine.yPos+hueLine.height);
 
     gui->autoSizeToFitWidgets();
     gui->enable();
     gui->setAutoDraw(true);
 
+    ofAddListener(gui->newGUIEvent, this, &testApp::guiEvent);
     
-    Presets.setup(mixerRegion.leftX+30, ledControl.yRight+10, mixerRegion.rightX-mixerRegion.leftX-60, winHigh/4, matrixW, matrixH, PRESETS_NUM);
+    Presets.setup(mixerRegion.leftX+30, ledControl.yRight+40, mixerRegion.rightX-mixerRegion.leftX-60, winHigh/4, matrixW, matrixH, PRESETS_NUM);
     presetsShift = false;
     
     bMidiPortClosed = true;
@@ -237,19 +240,21 @@ void testApp::setup(){
 
 void testApp::update(){
 	frameCount++;
-    if (OscButton.isOn) TCP.update();
+    if (OscButton->getValue()) TCP.update();
 	if (frameRate/30 == frameCount) frameCount = 0;
     
+    ledControl.setAddrMode(LedAddrMode->getValue());
 //    if (bpmCtrl.Sync.isOn &&
 //    (bpmCtrl.liveAudioAnalysis.aubioOnsetDetectionVector.size() - bpmCtrl.liveAudioAnalysis.lastBeatTime) < 40){
 //        midiTapOut.sendControlChange(1, 2, 127);
 //        midiTapOut.sendControlChange(1, 2, 0 );
 //    }
 //    if (){};
-    midiInPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver Bus 1" : "nanoKONTROL" );
-    midiOutPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver Bus 1" : "nanoKONTROL" );
-	if (midiInPort == 100 || midiOutPort == 100 || bMidiPortClosed)
-        setupMidi();
+
+//    midiInPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver Bus 1" : "nanoKONTROL" );
+//    midiOutPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver Bus 1" : "nanoKONTROL" );
+//	if (midiInPort == 100 || midiOutPort == 100 || bMidiPortClosed)
+//        setupMidi();
     
     while(oscReceiver.hasWaitingMessages()){
 		// get the next message
@@ -271,14 +276,7 @@ void testApp::update(){
 //--------------------------------------------------------------
 void testApp::draw(){
     ofSetColor(0, 0, 0);
-    ofNoFill();
     // BUTTONS
-	Play.draw();
-    Start.draw();
-    OscButton.draw();
-    ArdButton.draw();
-    MidiSelect.draw();
-    LedAddrMode.draw();
 
     gui->setPosition(0, 0);
     
@@ -291,19 +289,19 @@ void testApp::draw(){
     Presets.draw();
 
     Mixer->setSaturation(255-mixerSaturation->getValue());
+    Mixer->setBrightness(mixerBrightness->getValue());
+
 	for (int i=0; i<controllersNum; i++)
 	{
 		ofSetColor(0, 200, 55);
 		
         Gen[i].draw(quarterBeatCounter);
-        
-//        Volume[i].draw();
 
         ofColor * seqBitmap;
 		seqBitmap = Gen[i].getSequencedBitmap();
 		Mixer->feedBitmap(seqBitmap, i, 255);
 	}
-
+    
 	ledControl.parseBitmap(Mixer->outputMixedChar());
     ledControl.setSaturation(255-mixerSaturation->getValue());
 
@@ -313,39 +311,35 @@ void testApp::draw(){
         ledControl.getDmx(dmx);
         if(dmx.isConnected()) {
             dmx.update();
-        } else {
-            ofSetColor(255);
-            ofDrawBitmapString("COuld not connect to port " + ofToString(DMX_PORT), 400, 10);
         }
     }
+    
+    if(!dmx.isConnected()) {
+        ofSetColor(255,0,0);
+        ofDrawBitmapString("NO USB->DMX", ofGetWidth()/2-45, 10);
+    }
+
     ofColor * colorPix = ledControl.getBitmap();
 
-	if ((OscButton.isOn || ArdButton.isOn) && frameCount == 0) // && enableArduino)
+	if (OscButton->getValue() && frameCount == 0) // && enableArduino)
 	{
 
-        if (OscButton.isOn) {
-            if (OscButton.isOn) {
-                unsigned char * matrixPixels = new unsigned char [ledControl.ledsInChain*3];
-                ledControl.getChainBitmapChar(matrixPixels);
 
-                ofxOscMessage m;
-                //	m.setAddress( "/mouse/position" );
-                m.setAddress( "/led/aaa" );
-                for (unsigned int i=0; i < ledControl.ledsInChain*3;i+=3) {
-                    m.addIntArg( matrixPixels[i] );
-                    m.addIntArg( matrixPixels[i+1] );
-                    m.addIntArg( matrixPixels[i+2] );
-                }
+        unsigned char * matrixPixels = new unsigned char [ledControl.ledsInChain*3];
+        ledControl.getChainBitmapChar(matrixPixels);
+
+        ofxOscMessage m;
+        //	m.setAddress( "/mouse/position" );
+        m.setAddress( "/led/aaa" );
+        for (unsigned int i=0; i < ledControl.ledsInChain*3;i+=3) {
+            m.addIntArg( matrixPixels[i] );
+            m.addIntArg( matrixPixels[i+1] );
+            m.addIntArg( matrixPixels[i+2] );
+        }
 //                oscSender.sendMessage( m );
-            }
-		}
-
 
 	}
-    ofColor col = ofColor(0);
-    col;
-    col.setBrightness(255);
-    col;
+
 	ofSetWindowTitle("FPS: " + ofToString((int)ofGetFrameRate()));
 }
 
@@ -353,6 +347,9 @@ void testApp::draw(){
 void testApp::keyPressed(int key){
 	if(key=='a') {
         ;;
+    }
+    if(key == ' ') {
+        mixerBrightness->setValue(0.f);
     }
 }
 
@@ -374,6 +371,15 @@ void testApp::keyReleased(int key) {
     if(key=='f') {
         ofToggleFullscreen();  
     }
+    if(key == ' ') {
+        mixerBrightness->setValue(255.f);
+    }
+    if(key == 's') {
+        ledControl.saveDmxConfig();
+    }
+    if(key == 'l') {
+        ledControl.loadDmxConfig();
+    }
 }
 
 //--------------------------------------------------------------
@@ -394,50 +400,42 @@ void testApp::mousePressed(int x, int y, int button){
             for (int i=0; i<4; i++) Presets.load(Presets.ledLastClicked, i, Gen[i], loadColorButton->getValue());
         }
     };
-    Play.isClicked(x,y);
-    if (MidiSelect.isClicked(x,y)) {
-        abletonCtrl = MidiSelect.isOn ? 1 : 0;
-        setupMidi();
-    }
+
+//    if (MidiSelect.isClicked(x,y)) {
+//        abletonCtrl = MidiSelect.isOn ? 1 : 0;
+//        setupMidi();
+//    }
     bpmCtrl.isClicked(x,y);
-    if (ArdButton.isClicked(x,y)) {
-        if (ArdButton.isOn) {
-            Arduino.setup(serialName, 115200);
-//            Arduino.setVerbose(true);
-            Arduino.flush();
-        } else {
-//            Arduino.close();
-        }
-    }
-    
-    if (LedAddrMode.isClicked(x, y)) {
-//        ledControl.setMidiActive(LedAddrMode.isOn);
 
-        ledControl.setAddrMode(LedAddrMode.isOn);
-//        LedAddrMode.isOn ?
-//            ledControl.setChainState(Presets.getChainState()) :
-//            Presets.setChainState(ledControl.getChainState());
-    }
-    if (LedAddrMode.isOn && ledControl.isClicked(x, y)) {
+    if (LedAddrMode->getValue() && ledControl.isClicked(x, y)) {
         ledControl.setClicked(x,y, ofColor(200,200,0));
-        ledControl.updateColor(ofColor(200,200,0));
+//        ledControl.updateColor(ofColor(200,200,0));
     }
 
-    if (OscButton.isClicked(x,y)) {
+}
+
+void testApp::guiEvent(ofxUIEventArgs &e){
+    
+    if (e.widget == Start) {
+        quarterBeatCounter = 0;
+    }
+    else if (e.widget == LedAddrMode) {
+        
+    }
+    else if (e.widget == OscButton) {
         if (!TCP.weConnected) TCP.setup();
-    };
+    }
 }
 
 void testApp::exit()
 {
 	//if (!setupAudioButton.getState() && soundInited) ofSoundStreamStop();
+#ifdef USE_AUDIO
 	ofRemoveListener(inputSoundStream.audioReceivedEvent, this, &testApp::audioInputListener);
-	Arduino.flush();
-    if (ArdButton.isOn) Arduino.close();
-    
 	leftAudioIn.clear();
 	rightAudioIn.clear();
-
+#endif
+    
 	delete [] region;
 	delete [] colorSelect;
 
@@ -468,7 +466,7 @@ void testApp::audioInputListener(ofxAudioEventArgs &args){
             // pos a whole number of times, we've entered a new quarter beat
 
             if(fmod(pos,lengthOfQuarterBeatInSamples)==0){
-                if (Play.isOn) quarterBeatCounter++;
+                if (bPlaying) quarterBeatCounter++;
                 if (quarterBeatCounter == limitSteps) quarterBeatCounter = 0;
                 pos = 0;
             }
@@ -524,9 +522,11 @@ void testApp::setupMidi() {
             midiOut.openPort(midiOutPort);
             bMidiPortClosed = false;
             
-            Play.setupMidi(41, 1, midiInPort, midiOutPort);
-            Play.setMidiActive(true);
-            Start.setupMidi(43, 1, midiInPort, midiOutPort);
+//            Play.setupMidi(41, 1, midiInPort, midiOutPort);
+//            Play.setMidiActive(true);
+//            Start.setupMidi(43, 1, midiInPort, midiOutPort);
+            
+            
             //    Start.setMidiActive(true);
             bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
             
@@ -563,7 +563,8 @@ void testApp::newMessage(ofxMidiEventArgs &args){
 //	midiPort 		= args.port;
 	midiTimestamp 	= args.timestamp;
     
-    if (midiId == Start.midiId && midiValue == 127) quarterBeatCounter = 0, Play.receiveMidi(args);
+    if (midiId == MIDI_SEQ_START_CC && midiValue == 127) quarterBeatCounter = 0;// Play->setValue(!Play->getValue());
+    if (midiId == MIDI_SEQ_PLAY_CC && midiValue == 127) Play->setValue(!Play->getValue());
     // Turn Off other Sequencers except now selected
 //    if (!abletonCtrl) {
     if (midiId >= midiSeqActivationStartCC && midiId < midiSeqActivationStartCC+controllersNum && midiValue == 127)
@@ -602,4 +603,8 @@ void testApp::newMessage(ofxMidiEventArgs &args){
     if (midiId == MIDI_MIX_SATURATION) mixerSaturation->setValue(midiValue ? ofMap(midiValue, 1, 127, 1, 255) : 0);
     
 //    if (midiValue) printf("APP CHAN: %i ID: %i VALUE: %i \n", args.channel, midiId, midiValue);
+}
+
+void testApp::toggleAddressMode() {
+    LedAddrMode->setValue(!LedAddrMode->getValue());
 }
