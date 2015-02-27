@@ -369,6 +369,11 @@ void LEDS::updateColor(ofColor newColor, ofColor inactColor)
     }
 }
 
+LED * LEDS::getByRowCol(int r, int c) {
+    if (r*c > rows*columns-1) return NULL;
+    return (leds+r*columns+c);
+}
+
 ofColor * LEDS::getBitmap()
 {
     for (int i = 0; i < rows*columns; i++)
@@ -533,27 +538,19 @@ void LEDS::getDmx(ofxDmx &dmx) {
 }
 
 void LEDS::saveDmxConfig() {
-
+    
     ofxXmlSettings *XML = new ofxXmlSettings();
     for (int i = 0; i < rows*columns; i++)
     {
         int index = XML->addTag("LED");
-        if(XML->pushTag("LED", index))
-            for(vector<ofxUIWidget *>::iterator it = leds[i].gui->getWidgets().begin(); it != leds[i].gui->getWidgets().end(); ++it)
-            {
-//                if((*it)->hasState())
-//                {
-                    int index = XML->addTag("Widget");
-                    if(XML->pushTag("Widget", index))
-                    {
-                        XML->setValue("Kind", (*it)->getKind(), 0);
-                        XML->setValue("Name", (*it)->getName(), 0);
-                        (*it)->saveState(XML);
-                    }
-                    XML->popTag();
-//                }
-            }
+        if(XML->pushTag("LED", index)) {
+            
+            XML->setValue("row", (int)leds[i].numRow, 0);
+            XML->setValue("column", (int)leds[i].numColumn, 0);
+            XML->setValue("startAddress", (int)leds[i].dmxStartAddress, 0);
+            XML->setValue("type", leds[i].dmxType, 0);
             XML->popTag();
+        }
     }
     XML->saveFile("dmxConfig.xml");
     delete XML;
@@ -565,23 +562,17 @@ void LEDS::loadDmxConfig() {
     int ledTags = XML->getNumTags("LED");
     for (int led_num=0; led_num<ledTags; led_num++) {
         if (led_num == rows*columns) break;
-
+        
         XML->pushTag("LED", led_num);
-        int widgetTags = XML->getNumTags("Widget");
-        for(int i = 0; i < widgetTags; i++)
-        {
-            XML->pushTag("Widget", i);
-            string name = XML->getValue("Name", "NULL", 0);
-            ofxUIWidget *widget = leds[led_num].gui->getWidget(name);
-            if(widget != NULL && widget->hasState())
-            {
-                widget->loadState(XML);
-//                if(bTriggerWidgetsUponLoad){
-//                    triggerEvent(widget);
-//                }
-            }
-            XML->popTag();
+        
+        int row = XML->getValue("row",0, 0);
+        int column = XML->getValue("column", 0, 0);
+        LED * l = getByRowCol(row, column);
+        if (l != NULL) {  // check if not null
+            l->setDmxAddress(XML->getValue("startAddress", 0, 0));
+            l->setDmxType(XML->getValue("type", 0, 0));
         }
+        
         XML->popTag();
     }
 }

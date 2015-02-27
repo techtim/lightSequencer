@@ -144,7 +144,7 @@ void Generator::draw(unsigned int quarterBeatCounter) {
 
     effects.updateColor(hueLine.color);
 //    effects.parseBitmap(ledMatrix.getBitmapChar());
-    if (ledMatrix.changedBitmap) effects.parseBitmap(ledMatrix.getBitmapChar()), ledMatrix.changedBitmap = false;
+    if (ledMatrix.changedBitmap) effects.parseBitmap(ledMatrix.getBitmapChar()), ledMatrix.changedBitmap = false, effects.retrigger();
     ofSetColor(255, 255, 255);
     bool act;
     effects.draw();

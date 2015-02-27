@@ -48,6 +48,9 @@ enum ledDmxType
     LED_DMX_W = 4
 };
 
+//const std::string dt[5] = {"RGB","RGB+A","A+RGB","RGB+W","W"};
+//const std::vector<std::string> dmxTypes(dt, dt+5);
+
 const int DMX_ADDR_MAP[] =
 {
     133, 41, 21, 1, 61, 81, 117, 157,

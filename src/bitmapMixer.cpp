@@ -116,16 +116,19 @@ unsigned char * bitmapMixer::outputMixedChar() {
     for (int j=0; j<channelsCount; j++) {
         for (int i = 0; i < bitmapLength; i++) {
             ofColor col = channel[j].bitmap[i];
-            ofSetColor(channel[j].bitmap[i]);
+//            ofSetColor(channel[j].bitmap[i]);
+            col.setBrightness(brightness);
+            ofSetColor(col);
             ofRect(i,0,1,5);
         }
     }
+
     fbo.end();
 
     fbo.readToPixels(pixs);
     for (int i=0; i<pixs.size();i++) {
         pixs.getColor(i, 0).setSaturation(saturation);
-        pixs.getColor(i, 0).setBrightness(brightness);
+//        pixs.getColor(i, 0).setBrightness(brightness);
     }
     return pixs.getPixels();
 }

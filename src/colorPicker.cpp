@@ -1,19 +1,10 @@
 #include "colorPicker.h"
 
-colorPicker::colorPicker(){
-    
-    width    = 0;
-    height   = 0;
-    
-    xPos     = 0;
-    yPos     = 0;
-    
-    colorPos = 0;
-    triWidth = 30;
-    psyPos   = 0;
-    evenCounter = 0;
-    colorPosStart = -1;
-    colorPosEnd = -1;
+colorPicker::colorPicker():width(0),height(0),
+xPos(0),yPos(0), hueSpeed(0),
+colorPos(0),triWidth(30),psyPos(0),evenCounter(0),colorPosStart(-1),colorPosEnd(-1)
+{
+
 }
 
 void colorPicker::loadImage(string path){

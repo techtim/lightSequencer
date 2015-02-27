@@ -52,10 +52,12 @@ public:
     void moveRight();
     void moveUp();
     void moveDown();
+    void retrigger() { bRetriger = true; } ;
     
 private:
     unsigned int columns, rows;
     unsigned int ledsNumber;
+    bool bRetriger;
 };
 
 #endif

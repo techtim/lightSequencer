@@ -27,7 +27,9 @@ class LEDS {
         void parseBitmap(unsigned char *pixels, bool onlyState = false);
 		void parseBitmap(ofColor * pixels, bool onlyState = false);
 		void parseBitmap();
-        
+    
+        LED * getByRowCol(int r, int c);
+    
 		ofColor * getBitmap();
 		unsigned char * getBitmapChar();
 		ofColor * bitmap;

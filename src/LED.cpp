@@ -99,14 +99,9 @@ void LED::setupDmxGui() {
     dmxType = LED_DMX_RGBA;
 //    gui->addNumberDialer("addr", 1, 512, dmxStartAddress, 3)->setDrawOutline(true);
     gui->addWidgetDown(dmxAddr);
-    vector<string> types;
-    types.push_back("RGB");
-    types.push_back("RGB+A");
-    types.push_back("A+RGB");
-    types.push_back("RGB+W");
-    types.push_back("W");
 
-    typesList = new ofxUIDropDownList(70, "RGB+A", types, OFX_UI_FONT_SMALL);
+    typesList = new ofxUIDropDownList(70, "RGB+A", dmxTypes, OFX_UI_FONT_SMALL);
+
     typesList->activateToggle("RGB+A");
 //    typesList->setShowCurrentSelected(true);
     gui->addWidgetDown(typesList);
@@ -128,6 +123,33 @@ void LED::showGui(bool bShow) {
     bShowGui ? gui->enable() : gui->disable();
 }
 
+void LED::setDmxType(ledDmxType t) {
+    dmxType = t;
+    typesList->setName(dmxTypes[(int)dmxType]);
+    typesList->activateToggle(dmxTypes[(int)dmxType]);
+}
+
+void LED::setDmxType(int t) {
+    switch (t) {
+        case 0:
+            setDmxType(LED_DMX_RGB);
+            break;
+        case 1:
+            setDmxType(LED_DMX_RGBA);
+            break;
+        case 2:
+            setDmxType(LED_DMX_ARGB);
+            break;
+        case 3:
+            setDmxType(LED_DMX_RGBW);
+            break;
+        case 4:
+            setDmxType(LED_DMX_W);
+            break;
+        default:
+            break;
+    }
+}
 
 void LED::getDmx(ofxDmx &dmx) {
     if (dmxStartAddress == 0) return;

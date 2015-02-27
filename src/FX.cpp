@@ -14,7 +14,8 @@ FX::FX() {
     moveStep    = 0;
     isEvenStep  = false;
     numEffects  = 4;
-    
+    bRetriger = true; // to trigger origin bitmap
+
     columns = 0;
     rows = 0;
     length = 0;
@@ -33,6 +34,9 @@ FX::FX() {
     gui->addWidgetRight(moveLeftButton);
     moveRightButton = new ofxUILabelToggle(">", false, 0,0,0,0, OFX_UI_FONT_SMALL);
     gui->addWidgetRight(moveRightButton);
+    
+    moveUpButton = new ofxUILabelToggle("^", false, 0,0,0,0, OFX_UI_FONT_SMALL);
+    gui->addWidgetRight(moveUpButton);
     
     gui->getCanvasTitle()->setVisible(false);
     gui->autoSizeToFitWidgets();
@@ -66,8 +70,10 @@ void FX::process() {
     //    isEvenStep != isEvenStep;
     moveLeft();
     moveRight();
+    moveUp();
     invert();
     mirror();
+    bRetriger = false;
 }
 
 void FX::draw() {
@@ -118,36 +124,66 @@ void FX::mirror() {
 
 void FX::moveLeft() {
     if (!setupFinished || !moveLeftButton->getValue()) return;
-    printf("LEFT %d", moveStep);
-    if (moveStep>columns) moveStep=0;
-    //        for (int stepper=0; stepper < moveStep; stepper++){
-    for (int i=0; i<length; i+=columns) {
-        LED tmp = leds[i];
-        for (int j=0; j<columns-1; j++) {
-            leds[i+j] = leds[i+j+1];
-            //                leds[i].color = leds[i].color.getHex() == 0 ? color : tmpColor.black;
-            //                leds[i].isSelected = !leds[i].isSelected;
-        }
-        leds[i+columns-1] = tmp;
-    }
-    //        }
-    moveStep++;
-}
-
-void FX::moveRight() {
-    if (!setupFinished || !moveRightButton->getValue()) return;
-    //        printf("IVERT");
-    if (moveStep>columns) moveStep=0;
     
-    for (int stepper=0; stepper < moveStep; stepper++){
+    if (!bRetriger)
         for (int i=0; i<length; i+=columns) {
             LED tmp = leds[i];
             for (int j=0; j<columns-1; j++) {
                 leds[i+j] = leds[i+j+1];
-                //                leds[i].color = leds[i].color.getHex() == 0 ? color : tmpColor.black;
-                //                leds[i].isSelected = !leds[i].isSelected;
             }
             leds[i+columns-1] = tmp;
         }
-    }
+    //        }
+    moveStep++;
+    if (moveStep>=columns) moveStep=0;
+}
+
+void FX::moveRight() {
+    if (!setupFinished || !moveRightButton->getValue()) return;
+
+    if (!bRetriger)
+        for (int row=1;row<=rows; row++) {
+            LED tmp = leds[row*columns-1];
+            for (int j=1; j<columns; j++) {
+                leds[row*columns-j] = leds[row*columns-j-1];
+            }
+            leds[(row-1)*columns] = tmp;
+        }
+    
+    moveStep++;
+    if (moveStep>columns) moveStep=0;
+}
+
+void FX::moveUp() {
+    if (!setupFinished || !moveUpButton->getValue()) return;
+
+    if (!bRetriger)
+        for (int i=0; i<columns; i++) {
+
+            LED tmp = leds[i];
+            for (int row=0; row<rows-1; row++) {
+                leds[i+columns*row]=leds[i+columns*(row+1)];
+            }
+            leds[i+columns*(rows-1)]=tmp;
+        }
+  
+    moveStep++;
+    if (moveStep>rows) moveStep=0;
+}
+
+void FX::moveDown() {
+    if (!setupFinished || !moveUpButton->getValue()) return;
+    
+    if (!bRetriger)
+        for (int i=0; i<columns; i++) {
+            
+            LED tmp = leds[i];
+            for (int row=0; row<rows-1; row++) {
+                leds[i+columns*row]=leds[i+columns*(row+1)];
+            }
+            leds[i+columns*(rows-1)]=tmp;
+        }
+    
+    moveStep++;
+    if (moveStep>rows) moveStep=0;
 }

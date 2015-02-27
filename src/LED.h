@@ -8,6 +8,9 @@
 #include "ofxUI.h"
 #include "ofxDmx.h"
 
+const std::string dt[5] = {"RGB","RGB+A","A+RGB","RGB+W","W"};
+const std::vector<std::string> dmxTypes(dt, dt+5);
+
 
 class LED {
     
@@ -37,6 +40,8 @@ public:
         return numInChain;
     }
     
+    void setDmxType(ledDmxType t);
+    void setDmxType(int t);
     void getDmx(ofxDmx &dmx);
     
     void update();
