@@ -16,7 +16,7 @@
 #include "ofxMidi.h"
 #include "FX.h"
 
-class Generator {
+class Generator: public ofxMidiListener {
     ofColor hueColor, selectColor, actColor, inactColor;
 
     // sequencer
@@ -47,7 +47,7 @@ public:
     void setup(unsigned int x, unsigned int y, unsigned int wid, unsigned int hei, 
                unsigned int matW, unsigned int matH, bool at_bottom, unsigned int id);
     void setupMidi(unsigned int inPort, unsigned int outPort, unsigned int seqActivCC, unsigned int seqBeginCC, unsigned int ledMatrixActivCC, unsigned int hue, unsigned int midiChannel = 1);
-    void receiveMidi(ofxMidiEventArgs &args);
+    void newMidiMessage(ofxMidiMessage &args);
 
     void setActive(bool to) {
         active = to;

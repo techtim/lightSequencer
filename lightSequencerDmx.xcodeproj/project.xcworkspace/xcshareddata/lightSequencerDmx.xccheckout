@@ -20,6 +20,8 @@
 		<string>https://github.com/jocabola/ofxSoundStream.git</string>
 		<key>7E804D925461714118DB355C65BC964B41D94376</key>
 		<string>https://github.com/rezaali/ofxUI.git</string>
+		<key>90E2F969A762FB62C413A0C44D1F334E6EC3F531</key>
+		<string>https://github.com/danomatika/ofxMidi.git</string>
 		<key>BECD090E7B2542DF4B3665BBBFEDA68FA5148308</key>
 		<string>https://github.com/techtim/lightSequencer.git</string>
 	</dict>
@@ -28,15 +30,17 @@
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>007FBC1B650388E1825ACF397000A981AADD7017</key>
-		<string>../../../../../addons/ofxOsc</string>
+		<string>../../../addons/ofxOsc</string>
 		<key>1C584D82D8F91B619E103DBEA051F0CCC0070ED3</key>
-		<string>../../../../../addons/ofxDmx</string>
+		<string>../../../addons/ofxDmx</string>
 		<key>5D667B2E28949AE88EF0D88717D51BF45FBA1DE2</key>
-		<string>../../../../../addons/ofxPortaudioSoundstream</string>
+		<string>../../../addons/ofxPortaudioSoundstream</string>
 		<key>7C7DB0FBD95D6C95635F39A120E97A11D933F54F</key>
-		<string>../../../../../addons/ofxSoundStream</string>
+		<string>../../../addons/ofxSoundStream</string>
 		<key>7E804D925461714118DB355C65BC964B41D94376</key>
-		<string>../../../../../addons/ofxUI</string>
+		<string>../../../addons/ofxUI</string>
+		<key>90E2F969A762FB62C413A0C44D1F334E6EC3F531</key>
+		<string>../../../addons/ofxMidi</string>
 		<key>BECD090E7B2542DF4B3665BBBFEDA68FA5148308</key>
 		<string>../..</string>
 	</dict>
@@ -63,6 +67,14 @@
 			<string>1C584D82D8F91B619E103DBEA051F0CCC0070ED3</string>
 			<key>IDESourceControlWCCName</key>
 			<string>ofxDmx</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>90E2F969A762FB62C413A0C44D1F334E6EC3F531</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxMidi</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>

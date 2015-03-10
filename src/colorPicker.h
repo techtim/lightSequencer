@@ -10,7 +10,7 @@
 void ofCloseFreeImage();
 
 //----------------------------------------------------
-class colorPicker {
+class colorPicker : public ofxMidiListener {
 	
 	public :
     colorPicker();
@@ -46,8 +46,14 @@ class colorPicker {
     float hueSpeed;
     //---MIDI
     void setupMidi(unsigned int ident, unsigned int channel=1, unsigned int port = 0, unsigned int psy_bottom = 32, unsigned int psy_speed = 71);
-    void receiveMidi(ofxMidiEventArgs &args);
+//    void receiveMidi(ofxMidiEventArgs &args);
     ofxMidiIn midiIn;
+    void newMidiMessage(ofxMidiMessage& eventArgs);
+    ofxMidiMessage midiMessage;
+    
+    stringstream text;
+    
+    
     
     int midiChannel; // channel for exact sequence , setuped
     int midiId;

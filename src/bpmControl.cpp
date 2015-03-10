@@ -70,7 +70,7 @@ void bpmControl::setupMidi(unsigned int ident, unsigned int channel, unsigned in
     if (midiInPort != 100) { // do not turn on trick
         midiIn.openPort(midiInPort);
         midiOut.openPort(midiOutPort);
-        ofAddListener(midiIn.newMessageEvent, this, &bpmControl::receiveMidi);
+        midiIn.addListener(this);
         Sync.setupMidi(midiSyncCC, 1, midiInPort, midiOutPort);
         Sync.setMidiActive(true);
         Reset.setupMidi(midiResetCC, 1, midiInPort, midiOutPort); 
@@ -78,7 +78,7 @@ void bpmControl::setupMidi(unsigned int ident, unsigned int channel, unsigned in
     }
 }
 
-void bpmControl::receiveMidi(ofxMidiEventArgs &args){
+void bpmControl::newMidiMessage(ofxMidiMessage &args){
 	if (midiChannel == args.channel){
 
 //            if (args.byteOne) printf("BPM CHAN: %i ID: %i VALUE: %i \n", args.channel, args.byteOne, args.byteTwo) ;

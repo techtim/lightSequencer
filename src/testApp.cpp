@@ -54,7 +54,7 @@ void testApp::setup(){
 
 	//---Layout
 	controllersNum = 4;
-	controllersWidth = 360;
+	controllersWidth = 380;
     controllersHeight= 300;
     unsigned int cntrlOffsetX = 5;
     
@@ -500,7 +500,7 @@ void testApp::setBPM(float targetBPM){
     // NB. Currently the target BPM might not actually be achieved,
     // because permitted BPMs are limited to divisible by a whole number of samples.
     lengthOfOneBeatInSamples = (int)((SAMPLE_RATE*60.0f)/targetBPM);
-	lengthOfQuarterBeatInSamples = (int)((SAMPLE_RATE*60.0f)/targetBPM/4);
+	lengthOfQuarterBeatInSamples = (int)((SAMPLE_RATE*60.0f)/targetBPM/8);
     BPM=(SAMPLE_RATE*60.0f)/lengthOfOneBeatInSamples;
 }
 
@@ -510,8 +510,29 @@ void testApp::setupMidi() {
 	midiIn.listPorts();
     midiOut.listPorts();
     
-    midiInPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver IAC_Bus_1" : "nanoKONTROL" );
-    midiOutPort = midiOut.getPortByName("nanoKONTROL");
+    midiInPort = 100; // means no port found
+    for (int i=0; i<midiIn.getNumPorts();i++){
+       size_t found = midiIn.getPortName(i).find("nanoKONTROL");
+        if (found != string::npos) {
+            midiInPort=i;
+            break;
+        }
+    }
+//    midiInPort = 0; // forAbleton
+    
+//    midiInPort = midiIn.getPortByName( abletonCtrl ? "IAC Driver IAC_Bus_1" : "nanoKONTROL" );
+//    midiOutPort = midiOut.getPortByName("nanoKONTROL");
+    midiOutPort = 100; // means no port found
+    for (int i=0; i<midiOut.getNumPorts();i++){
+        size_t found = midiOut.getPortName(i).find("nanoKONTROL");
+        if (found != string::npos) {
+            midiOutPort=i;
+            break;
+        }
+    }
+//    midiOutPort = 0;
+    midiBeat.openPort(0);
+    
     midiTapPort = 100; // midiOut.getPortByName("IAC Driver IAC_Bus_2");
     
 	if (midiInPort != 100 && midiOutPort != 100) {
@@ -522,12 +543,11 @@ void testApp::setupMidi() {
             midiOut.openPort(midiOutPort);
             bMidiPortClosed = false;
             
-//            Play.setupMidi(41, 1, midiInPort, midiOutPort);
+//            Play->setupMidi(41, 1, midiInPort, midiOutPort);
 //            Play.setMidiActive(true);
 //            Start.setupMidi(43, 1, midiInPort, midiOutPort);
+//            Start.setMidiActive(true);
             
-            
-            //    Start.setMidiActive(true);
             bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
             
             int midiChannel;
@@ -543,7 +563,7 @@ void testApp::setupMidi() {
             }
             
             printf("\nOPENED PORT -> in: %i -> out: %i \n", midiInPort, midiOutPort);
-            if (midiInPort != 100) ofAddListener(midiIn.newMessageEvent, this, &testApp::newMessage);
+            if (midiInPort != 100) midiIn.addListener(this);
         }
     } else {
         bMidiPortClosed = true;
@@ -557,27 +577,27 @@ void testApp::setupMidi() {
 
 }
 
-void testApp::newMessage(ofxMidiEventArgs &args){
-	midiValue 		= args.byteTwo;
-	midiId 			= args.byteOne;
+void testApp::newMidiMessage(ofxMidiMessage& args) {
+	midiValue 		= args.value;
+	midiId 			= args.control;
 //	midiPort 		= args.port;
-	midiTimestamp 	= args.timestamp;
-    
+	midiTimestamp 	= args.deltatime;
+
     if (midiId == MIDI_SEQ_START_CC && midiValue == 127) quarterBeatCounter = 0;// Play->setValue(!Play->getValue());
     if (midiId == MIDI_SEQ_PLAY_CC && midiValue == 127) Play->setValue(!Play->getValue());
     // Turn Off other Sequencers except now selected
 //    if (!abletonCtrl) {
     if (midiId >= midiSeqActivationStartCC && midiId < midiSeqActivationStartCC+controllersNum && midiValue == 127)
         {
-//            Gen[midiId-midiSeqActivationStartCC];
-//            bool act = Gen[midiId-midiSeqActivationStartCC].isActive();
-//            unsigned int num = midiId-midiSeqActivationStartCC;
-//            if (act) {
-//                Gen[num].Sequencer.setMidiActive(false), Gen[num].ledMatrix.setMidiActive(false);
-//                Gen[num].setActive(false);
-//            } else {
-//                Gen[num].setActive(true);
-//            };
+            Gen[midiId-midiSeqActivationStartCC];
+            bool act = Gen[midiId-midiSeqActivationStartCC].isActive();
+            unsigned int num = midiId-midiSeqActivationStartCC;
+            if (act) {
+                Gen[num].Sequencer.setMidiActive(false), Gen[num].ledMatrix.setMidiActive(false);
+                Gen[num].setActive(false);
+            } else {
+                Gen[num].setActive(true);
+            };
 
         }
 //            Gen[i].isActive();
@@ -593,15 +613,19 @@ void testApp::newMessage(ofxMidiEventArgs &args){
 //                midiOut.sendControlChange(midiPort, midiSeqActivationStartCC+i, 127);
 //            Gen[midiId-midiSeqActivationStartCC].setActive(true);
 //            }
-
-    if (midiId >= midiPresetBeginCC && midiId < midiPresetBeginCC+20) {
+    bool bGenActive = false;
+    for (int i=0; i<4; i++) {
+        if (Gen[i].isActive()) bGenActive=true;
+    }
+    
+    if (!bGenActive && midiId >= MIDI_PRESET_BEGIN_CC && midiId < MIDI_PRESET_BEGIN_CC+16) {
 //            printf("PRESETS LOAD = %i \n", midiId - 10 + (presetsShift ? 16 : 0));
-        for (int i=0; i<4; i++) Presets.load(midiId - midiPresetBeginCC, i, Gen[i]);
+        for (int i=0; i<4; i++) Presets.load(midiId - MIDI_PRESET_BEGIN_CC, i, Gen[i]);
     };
 
     
     if (midiId == MIDI_MIX_SATURATION) mixerSaturation->setValue(midiValue ? ofMap(midiValue, 1, 127, 1, 255) : 0);
-    
+    if (midiId == MIDI_MIX_BRIGHTNESS) mixerBrightness->setValue(midiValue ? ofMap(midiValue, 1, 127, 1, 255) : 0);
 //    if (midiValue) printf("APP CHAN: %i ID: %i VALUE: %i \n", args.channel, midiId, midiValue);
 }
 

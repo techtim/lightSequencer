@@ -132,14 +132,21 @@ void ofxButton::setupMidi(unsigned int ident, unsigned int channel, unsigned int
     if (midiInPort != 100) { // do not turn on trick
 //        midiIn.closePort();
         midiIn.openPort(midiInPort);
+        midiIn.setVerbose(false);
+//        midiIn.ignoreTypes(false, false, false);
         if (midiOutPort != 100) {
 //            midiOut.closePort();
             midiOut.openPort(midiOutPort);
         }
-        ofAddListener(midiIn.newMessageEvent, this, &ofxButton::receiveMidi);
+        midiIn.addListener(this);
     }
 }
 
-void ofxButton::receiveMidi(ofxMidiEventArgs &args){
-    if (midiActive && midiId == args.byteOne && args.channel == midiChannel && args.byteTwo == 127) isOn = !isOn;
+void ofxButton::newMidiMessage(ofxMidiMessage& args) {
+//    printf("MIDI chan:%d id:%d val:%d %a \n", args.channel, args.control , args.value , args.deltatime);
+    if (midiActive && midiId == args.control && args.channel == midiChannel && args.value == 127 && args.deltatime!=midiDeltatime){
+
+        isOn = !isOn;
+        midiDeltatime = args.deltatime;
+    }
 }

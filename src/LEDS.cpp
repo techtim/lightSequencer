@@ -503,19 +503,23 @@ void LEDS::setupMidi(unsigned int ident, unsigned int channel, unsigned int inPo
     midiInPort = inPort, midiOutPort = outPort;
     if (midiInPort != 100) { // do not turn on trick
         midiIn.openPort(midiInPort);
+        midiIn.ignoreTypes(false, false, false);
+        midiIn.addListener(this);
+        midiIn.setVerbose(false);
+
         if (midiOutPort != 100) midiOut.openPort(midiOutPort);
-        ofAddListener(midiIn.newMessageEvent, this, &LEDS::receiveMidi);
     }
 }
 
-void LEDS::receiveMidi(ofxMidiEventArgs &args){
+void LEDS::newMidiMessage(ofxMidiMessage& args) {
+
 //	if (midiActivationCC == args.byteOne && args.channel == midiChannel) midiActive = args.byteTwo == 127 ? true : false;
     
 	if (midiActive && args.channel == midiChannel &&
-        args.byteOne >= midiSeqStartCC && 
-        args.byteOne<midiSeqStartCC+columns*rows && args.byteTwo == 127)
+        args.control >= midiSeqStartCC &&
+        args.control<midiSeqStartCC+columns*rows && args.value == 127)
     {
-		leds[args.byteOne-midiSeqStartCC].isSelected = (leds[args.byteOne-midiSeqStartCC].isSelected == true ? false : true);
+		leds[args.control-midiSeqStartCC].isSelected = (leds[args.control-midiSeqStartCC].isSelected == true ? false : true);
         changedBitmap = true;
     }
 }

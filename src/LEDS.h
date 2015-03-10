@@ -5,7 +5,7 @@
 #include "LED.h"
 #include "ofxMidi.h"
 
-class LEDS {
+class LEDS: public ofxMidiListener {
 
 	public:
 		LEDS();
@@ -94,7 +94,9 @@ class LEDS {
 
         //---MIDI
         void setupMidi(unsigned int ident, unsigned int channel,  unsigned int inPort, unsigned int outPort);
-        void receiveMidi(ofxMidiEventArgs &args);
+//        void receiveMidi(ofxMidiEventArgs &args);
+        void newMidiMessage(ofxMidiMessage& eventArgs);
+
         ofxMidiIn midiIn;
         ofxMidiOut midiOut;
         unsigned int midiInPort, midiOutPort;

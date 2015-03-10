@@ -13,7 +13,7 @@
 #include "ofMain.h"
 #include "ofxMidi.h"
 
-class ofxButton {
+class ofxButton: public ofxMidiListener {
 public:
 	ofxButton();
 	ofxButton(int x, int y, int wid, int hei);
@@ -33,6 +33,7 @@ public:
 	bool isOn;
 	bool type; // 0 - clicker, 1 - switcher;
 	unsigned int fontSize;
+
 	int leftX, leftY, rightX, rightY;
 	int width, height;
 	string actictiveText;
@@ -40,12 +41,13 @@ public:
     
     //---MIDI
     void setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort);
-    void receiveMidi(ofxMidiEventArgs &args);
+    void newMidiMessage(ofxMidiMessage& eventArgs);
     void setMidiActive(bool is) { midiActive = is; }
     ofxMidiIn midiIn;
     ofxMidiOut midiOut;
     unsigned int midiInPort, midiOutPort;
-    unsigned int midiChannel, midiId, midiValue; // channel for exact sequence , setuped 
+    unsigned int midiChannel, midiId, midiValue; // channel for exact sequence , setuped
+    double midiDeltatime;
     bool midiActive;
 
 };

@@ -49,27 +49,42 @@ public:
     unsigned int quant;
     ofxUILabelToggle * button8;
     ofxUILabelToggle * button16;
-    bool bQuant8, bQuant16;
+    ofxUILabelToggle * button32;
+
+    bool bQuant8, bQuant16, bQuant32;
     void setQuant8() {
-        quant = 2;
+        quant = 4;
         bQuant16    = false;
         bQuant8     = true;
-        button8->setValue(true);
+        button32->setValue(false);
         button16->setValue(false);
+        button8->setValue(true);
         //        setADSR(sliders[0].getValue(), sliders[1].getValue(), sliders[2].getValue());
         //            printf("A:%f D:%f R:%f", a,d,r);
     }
     
     void setQuant16() {
-        quant = 1;
+        quant = 2;
         bQuant16    = true;
         bQuant8     = false;
+        button32->setValue(false);
         button16->setValue(true);
         button8->setValue(false);
         //        setADSR(sliders[0].getValue(), sliders[1].getValue(), sliders[2].getValue());
         //            printf("A:%f D:%f R:%f", a,d,r);
     }
     
+    void setQuant32() {
+        quant = 1;
+        bQuant32    = true;
+        bQuant16    = false;
+        bQuant8     = false;
+        button32->setValue(true);
+        button16->setValue(false);
+        button8->setValue(false);
+        //        setADSR(sliders[0].getValue(), sliders[1].getValue(), sliders[2].getValue());
+        //            printf("A:%f D:%f R:%f", a,d,r);
+    }
     
     ofxUISuperCanvas * sliders;
 	ofxUIMinimalSlider* attSlider;
@@ -94,14 +109,14 @@ public:
 	
     //---MIDI---
     void setupMidi(unsigned int midiSeqStart, unsigned int channel, unsigned int InPort, unsigned int OutPort);
-    void newMessage(ofxMidiEventArgs &args);
+    void newMidiMessage(ofxMidiMessage& eventArgs);
     ofxMidiIn	midiIn;
     ofxMidiOut	midiOut;
     unsigned int midiInPort, midiOutPort;
     unsigned int midiChannel; // channel for exact sequence , setuped
     unsigned int midiId;
     unsigned int midiValue;
-    unsigned int midiButton8Id, midiButton16Id, midiAttSliderId, midiDecSliderId, midiRelSliderId;
+    unsigned int midiButton8Id, midiButton16Id, midiButton32Id, midiAttSliderId, midiDecSliderId, midiRelSliderId;
     
     unsigned int midiActivationCC;
     unsigned int midiSeqStartCC;

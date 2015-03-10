@@ -44,7 +44,7 @@
 
 //#define PROJECTROOT "/Users/tim/Programming/openFrameworks/oF62/apps/LED/sequenceLed"
 
-class Projector: public ofBaseApp{
+class Projector: public ofBaseApp {
 public:
 	~Projector(){
 		cout << "Projector destroyed" << endl;
@@ -90,7 +90,7 @@ public:
     int win_id;
 };
 
-class testApp : public ofBaseApp{
+class testApp : public ofBaseApp, public ofxMidiListener {
 	
 public:
 	void setup();
@@ -231,8 +231,8 @@ public:
 	
 	//		--- MIDI ---
     void setupMidi();
-	void newMessage(ofxMidiEventArgs &args);
-	void newBeat(ofxMidiEventArgs &args);
+	void newMidiMessage(ofxMidiMessage& eventArgs);
+//	void newBeat(ofxMidiEventArgs &args);
 	
 	ofxMidiIn midiBeat;
 	ofxMidiIn midiIn;

@@ -24,7 +24,7 @@ void colorPicker::setPosition(int x, int y){
     psyButton = new ofxUILabelToggle("psy", false, 0,0,0,0, OFX_UI_FONT_SMALL);
 //    gui->addWidgetRight(psyButton);
     
-    hueControl = new ofxUIMinimalSlider("speed", 0, 120, &hueSpeed, 128, 10);
+    hueControl = new ofxUIMinimalSlider("speed", 0, 60, &hueSpeed, 128, 10);
     gui->addWidgetRight(hueControl);
     gui->autoSizeToFitWidgets();
     gui->setPosition(x, y+height);
@@ -77,16 +77,18 @@ void colorPicker::draw()
     int psyLimitRight = colorPosEnd > 0 ? colorPosEnd : 360;
     if (hueControl->getValue() > 0) {
         if (evenCounter == 0) psyPos+=hueControl->getValue();
-        evenCounter = evenCounter ? 0 : 1;
-        if (psyPos >= psyLimitRight) psyPos = psyLimitLeft;
+        if (evenCounter == 1) psyPos-=hueControl->getValue();
+//        evenCounter = evenCounter ? 0 : 1;
+        if (psyPos >= psyLimitRight) evenCounter = 1;
+        if (psyPos <= psyLimitLeft) evenCounter = 0;
         colorPos = psyPos;
 //        color.setHsb(psyPos, 255.0f, 255.0f);
         color = HsvToRgb(psyPos, 255, 255);
     } else {
 //        color.setHue(colorPos);
 
-//        color = HsvToRgb(colorPos, 255, 255);
-        color = img.getColor(colorPos, 0);
+        color = HsvToRgb(colorPos, 255, 255);
+//        color = img.getColor(colorPos, 0);
     }
     
     gui->draw();
@@ -115,10 +117,10 @@ ofColor colorPicker::HsvToRgb (float hue, float satur, float value )
     rgbColor.set(r, g, b, 0);
 	
     //	if (hue==0) return rgbColor;
-    //    if (hue==360){
-    //        rgbColor.set(255, 255, 255, 255);
-    //        return rgbColor;
-    //    }
+//    if (hue==0){
+//        rgbColor.set(255, 255, 255, 255);
+//        return rgbColor;
+//    }
 	
     //  For rgbColor
     H = (int)(hue / 60);
@@ -161,19 +163,24 @@ void colorPicker::setupMidi(unsigned int ident, unsigned int channel, unsigned i
 	midiId = ident;
     if (port != 100) { // do not turn on trick
         midiIn.openPort(port);
-        ofAddListener(midiIn.newMessageEvent, this, &colorPicker::receiveMidi);
+        // don't ignore sysex, timing, & active sense messages,
+        // these are ignored by default
+        midiIn.ignoreTypes(false, false, false);
+        midiIn.addListener(this);
+        midiIn.setVerbose(false);
+
+//        ofAddListener(midiIn.newMessageEvent, this, &colorPicker::receiveMidi);
         //        hueControl.setupMidi(psy_speed);
         //        psyButton.setupMidi( psy_bottom, channel, port, port);
     }
 }
 
-void colorPicker::receiveMidi(ofxMidiEventArgs &args)
-{
-	if (midiChannel == args.channel)
-		if (midiId == args.byteOne)
+void colorPicker::newMidiMessage(ofxMidiMessage& msg) {
+	if (midiChannel == msg.channel)
+		if (midiId == msg.control)
 		{
             //            printf("PICKER Knob CHAN: %i ID: %i VALUE: %i \n", args.channel, midiId, midiValue) ;
-            int valueMapped = ofMap(args.byteTwo, 0, 127, 0, 360);
+            int valueMapped = ofMap(msg.value, 0, 127, 0, 360);
             colorPos = valueMapped;
             color = HsvToRgb(colorPos, 255, 255);
 		}

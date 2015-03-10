@@ -8,16 +8,14 @@
 
 #include "Sequencer.h"
 
-Sequencer::Sequencer(){
-    midiButton8Id   = 30;
-    midiButton16Id  = 31;
-    midiAttSliderId = 100;
-    midiDecSliderId = 101;
-    midiRelSliderId = 102;
-    currentStep = 1000; // big value to work on step == 0
-    ADSRoffset = 0;
-	ADSRvalue = 0;
-    stepTimestamp = 0;
+Sequencer::Sequencer():
+midiButton8Id(30), midiButton16Id(31), midiButton32Id(32), midiAttSliderId(100), midiDecSliderId(101), midiRelSliderId(102),
+currentStep(1000), // big value to work on step == 0
+ADSRoffset(0), ADSRvalue(0),
+midiId(0), midiValue(0), stepTimestamp(0),
+a(0), d(0), s(0), r(0)
+{
+    
 }
 
 void Sequencer::setup(
@@ -74,7 +72,8 @@ void Sequencer::setup(
     
 	setADSR(10.0f,10.0f,10.0f);
 	a = d = r = 10.f;
-    
+
+    bQuant32     = false;
     bQuant16    = true;
     bQuant8     = false;
     
@@ -82,8 +81,10 @@ void Sequencer::setup(
 //    ofxUILabelToggle(<#string _name#>, <#bool *_value#>)
     button8     = new ofxUILabelToggle("8", bQuant8, cellSize, cellSize, x, yLeft, OFX_UI_FONT_SMALL);
     button16    = new ofxUILabelToggle("16", bQuant16, cellSize, cellSize, x, yLeft+cell+spac, OFX_UI_FONT_SMALL);
+    button32    = new ofxUILabelToggle("32", bQuant16, cellSize, cellSize, x-cell-spac, yLeft+cell+spac, OFX_UI_FONT_SMALL);
     buttons->addWidget(button8);
     buttons->addWidget(button16);
+    buttons->addWidget(button32);
     
     buttons->setColorBack(ofColor(0,0,0,0));
     buttons->autoSizeToFitWidgets();
@@ -209,12 +210,15 @@ void Sequencer::draw()
         for (int i=0; i < rows * columns; i++) {
             midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, leds[i].isSelected ? 127 : 0);
         }
-        midiOut.sendControlChange(midiChannel, midiActivationCC, 127);
 
-        midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep, 127);
-        currentStep == 0 ?
-        midiOut.sendControlChange(midiChannel, midiSeqStartCC+steps-1, leds[steps-1].isSelected ? 127 : 0) :
-        midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep-1, leds[currentStep-1].isSelected ? 127 : 0) ;
+        if(ofGetFrameNum()%2 == 0) {
+            midiOut.sendControlChange(midiChannel, midiActivationCC, 127);
+
+            midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep, 127);
+            currentStep == 0 ?
+            midiOut.sendControlChange(midiChannel, midiSeqStartCC+steps-1, leds[steps-1].isSelected ? 127 : 0) :
+            midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep-1, leds[currentStep-1].isSelected ? 127 : 0) ;
+        }
     }
     
     for (int i = 0; i < rows; i++)
@@ -243,8 +247,8 @@ void Sequencer::draw()
 	updateColor(activeColor, inactiveColor);
 
     sliders->draw();
-    button8->draw();
-	button16->draw();
+//    button8->draw();
+//	button16->draw();
     ofNoFill();
     ofSetColor(100);
     ofRect(getRegion());
@@ -261,10 +265,11 @@ void Sequencer::setupMidi(unsigned int midiSeqStart, unsigned int channel, unsig
 
     midiIn.closePort();
     midiOut.closePort();
-    ofRemoveListener(midiIn.newMessageEvent, this, &Sequencer::newMessage);
+    midiIn.removeListener(this);
     midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+    midiIn.ignoreTypes(false, false, false);
     midiOut.openPort(midiOutPort);
-    ofAddListener(midiIn.newMessageEvent, this, &Sequencer::newMessage);
+    midiIn.addListener(this);
 
     midiActive = false;
     midiSeqStartCC = midiSeqStart;
@@ -279,6 +284,9 @@ void Sequencer::guiEvent(ofxUIEventArgs &e){
     else if (e.widget == button16) {
         setQuant16();
     }
+    else if (e.widget == button32) {
+        setQuant32();
+    }
     
 }
 
@@ -287,36 +295,39 @@ bool Sequencer::isClicked(int x, int y, bool dragged)
 	return LEDS::isClicked(x, y);
 }
 //
-void Sequencer::newMessage(ofxMidiEventArgs &args){
-	if (midiActivationCC == args.byteOne && args.byteTwo == 127 && args.channel == midiChannel) midiActive = !midiActive;
+void Sequencer::newMidiMessage(ofxMidiMessage &args){
+//	if (midiActivationCC == args.control && args.value == 127 && args.channel == midiChannel) midiActive = !midiActive;
 
     if (midiActive) {
         //        for (int i=0; i<3; i++) sliders[i].receiveMidi(args); // send command right to slider
         midiOut.sendControlChange(midiChannel, midiActivationCC, 0); // turn off activation button
 
-        if (midiButton8Id == args.byteOne) {
+        if (midiButton8Id == args.control) {
             setQuant8();
         }
-        else if (midiButton16Id == args.byteOne) {
+        else if (midiButton16Id == args.control) {
             setQuant16();
         }
-        else if (midiAttSliderId == args.byteOne) {
-            attSlider->setValue(mapNonLinear(args.byteTwo, 0, 127, 0, 255, 2));
+        else if (midiButton32Id == args.control) {
+            setQuant32();
         }
-        else if (midiDecSliderId == args.byteOne) {
-            decSlider->setValue(mapNonLinear(args.byteTwo, 0, 127, 0, 255, 2));
+        else if (midiAttSliderId == args.control) {
+            attSlider->setValue(mapNonLinear(args.value, 0, 127, 0, 255, 2));
         }
-        else if (midiRelSliderId == args.byteOne) {
-            relSlider->setValue(mapNonLinear(args.byteTwo, 0, 127, 0, 255, 2));
+        else if (midiDecSliderId == args.control) {
+            decSlider->setValue(mapNonLinear(args.value, 0, 127, 0, 255, 2));
+        }
+        else if (midiRelSliderId == args.control) {
+            relSlider->setValue(mapNonLinear(args.value, 0, 127, 0, 255, 2));
         }
     } else {
         midiOut.sendControlChange(midiChannel, midiActivationCC, 0); // turn off activation button
     }
 
 	if (midiActive && args.channel == midiChannel &&
-        args.byteOne >= midiSeqStartCC && 
-        args.byteOne<midiSeqStartCC+steps && args.byteTwo == 127
+        args.control >= midiSeqStartCC &&
+        args.control<midiSeqStartCC+steps && args.value == 127
         )
-		leds[args.byteOne-midiSeqStartCC].isSelected = (leds[args.byteOne-midiSeqStartCC].isSelected == true ? false : true);
+		leds[args.control-midiSeqStartCC].isSelected = (leds[args.control-midiSeqStartCC].isSelected == true ? false : true);
 }
 

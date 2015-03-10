@@ -22,7 +22,8 @@ Generator::Generator(){
 	limitSteps = 128;
 	seqCellSize = 40;
 	seqCellSpace = 5;
-    
+    minVolume = 0;
+    maxVolume = 0;
     active = false;
 }
 
@@ -81,7 +82,7 @@ void Generator::setup(unsigned int x, unsigned int y, unsigned int wid, unsigned
 
 //    volume = new ofxUIRangeSlider("vol", 0.f, 255.f, &minVolume, &maxVolume, 15, 255,
 //                                  leftX+width-10, hueLine.yPos+hueLine.height);
-    
+
     volume = gui->addRangeSlider("vol", 0.f, 255.f, &minVolume, &maxVolume, 15,255);
 //    gui->addWidgetRight(volume);
     gui->autoSizeToFitWidgets();
@@ -112,11 +113,13 @@ void Generator::setupMidi(unsigned int inPort, unsigned int outPort, unsigned in
 
     midiSeqBeginCC = seqBeginCC;
     midiHue = hue, midiSeqActivationStartCC = seqActivCC, midiLedMatrixActivationCC = ledMatrixActivCC;
-    midiIn.closePort();
-    midiOut.closePort();
+//    midiIn.closePort();
+//    midiOut.closePort();
     midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+    midiIn.ignoreTypes(false, false, false);
+    midiIn.setVerbose(false);
     midiOut.openPort(midiOutPort);
-    ofAddListener(midiIn.newMessageEvent, this, &Generator::receiveMidi);
+    midiIn.addListener(this);
     
     hueLine.setupMidi(midiHue, 1, midiInPort, 30+id, 70+id);
     ledMatrix.setupMidi(midiSeqBeginCC, midiInChannel, midiInPort, midiOutPort);
@@ -133,8 +136,8 @@ void Generator::draw(unsigned int quarterBeatCounter) {
 //        glTranslatef(0, (matrixCellSize+matrixSpace)*matrixH, 0);
 //    }
     id%2 == 0 ?
-        gui->setPosition(leftX+width-gui->getRect()->width, hueLine.yPos+hueLine.height) :
-        gui->setPosition(leftX, hueLine.yPos+hueLine.height);
+        gui->setPosition(leftX+width-gui->getRect()->width+15, hueLine.yPos+hueLine.height) :
+        gui->setPosition(leftX-15, hueLine.yPos+hueLine.height);
     
     ofSetColor(255, 255, 255);
     hueLine.draw();
@@ -236,9 +239,9 @@ void Generator::mousePressed(ofMouseEventArgs & args){
     }
 }
 
-void Generator::receiveMidi(ofxMidiEventArgs &args) {
-    midiValue 		= args.byteTwo;
-	midiId 			= args.byteOne;
+void Generator::newMidiMessage(ofxMidiMessage &args) {
+    midiValue 		= args.value;
+	midiId 			= args.control;
     if (midiLedMatrixActivationCC && midiId == midiLedMatrixActivationCC && midiValue == 127)
         matrixSequenceMode = matrixSequenceMode ? false : true;
 
@@ -246,9 +249,11 @@ void Generator::receiveMidi(ofxMidiEventArgs &args) {
         volume->setValueHigh(ofMap(midiValue, 0,128,0,255));
     }
 
+    if (midiId == MIDI_SEQ_START_CC && midiValue == 127) effects.retrigger();
+
     if (!active) return;
 //    printf("active: %i, matrMode: %i",midiSeqActivationStartCC, matrixSequenceMode? 1 : 0);
-    for (int i=0; i<3; i++) Sequencer.receiveMidi(args);
+//    for (int i=0; i<3; i++) Sequencer.newMidiMessage(args);
     if (matrixSequenceMode) {
             printf("SEQ START: %i\n",midiLedMatrixActivationCC);
         ledMatrix.setMidiActive(true); Sequencer.setMidiActive(false);

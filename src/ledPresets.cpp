@@ -114,7 +114,17 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
     if (presNum<0 || presNum>=presetsNum) {printf("WRONG PRES NUM\n"); return;}
     if (presets[presNum].is_active == false) {printf("EMPTY PRES NUM\n");return;}
     
-    presets[presNum].generators[genNum].quant == 1 ? gen.Sequencer.setQuant16() : gen.Sequencer.setQuant8();
+    switch (presets[presNum].generators[genNum].quant){
+        case 1:
+            gen.Sequencer.setQuant32();
+            break;
+        case 2:
+            gen.Sequencer.setQuant16();
+            break;
+        case 4:
+            gen.Sequencer.setQuant8();
+            break;
+    }
     
     //    unsigned char * map = presets[presNum].generators[genNum].matrix;
     //    for (int i=0; i<ledsNum*3; i++) printf("%02X",map[i]);
@@ -124,7 +134,7 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
     gen.effects.setPixelsState(presets[presNum].generators[genNum].matrix);
     gen.Sequencer.setPixelsState(presets[presNum].generators[genNum].sequence);
     gen.Sequencer.setADSR(presets[presNum].generators[genNum].att, presets[presNum].generators[genNum].dec, presets[presNum].generators[genNum].rel);
-    
+
     //--- Commented for Ableton
     //    presets[presNum].generators[genNum].fxInv   = gen.effects.invertButton.isOn ? 1 : 0;
     ((ofxUIButton*)gen.effects.invertButton)->setValue(presets[presNum].generators[genNum].fxInv == 1 ? true : false);
@@ -132,6 +142,7 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
     ((ofxUIButton*)gen.effects.moveRightButton)->setValue(presets[presNum].generators[genNum].fxMoveRight == 1 ? true : false);
     ((ofxUIButton*)gen.effects.moveLeftButton)->setValue(presets[presNum].generators[genNum].fxMoveLeft == 1 ? true : false);
     
+    gen.effects.retrigger();
 //    gen.effects.setShapeType(presets[presNum].generators[genNum].shapeType);
     
     printf("INV => %d ; MIR => %d", presets[presNum].generators[genNum].fxMir, presets[presNum].generators[genNum].fxInv);

@@ -14,7 +14,7 @@
 #include "ofxButton.h"
 #include "LiveAudioAnalysis.h"
 
-class bpmControl {
+class bpmControl : public ofxMidiListener {
     public:
 	
     bpmControl();
@@ -53,7 +53,7 @@ class bpmControl {
     
     
     //---MIDI
-	void receiveMidi(ofxMidiEventArgs &args);
+    void newMidiMessage(ofxMidiMessage &args);
     ofxMidiIn midiIn;
     ofxMidiOut midiOut;
     unsigned int midiInPort, midiOutPort;

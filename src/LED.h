@@ -23,8 +23,8 @@ public:
         color = col;
     };
     
-    void setADSR(ofVec3f adsr);
-    void setADSR(unsigned int _att, unsigned int _dec, unsigned int _rel, unsigned int _min=0, unsigned int _max=255);
+    void setADSR(const ofVec3f & adsr);
+    void setADSR(const unsigned int & _att, const unsigned int & _dec,const unsigned int & _rel, const unsigned int & _min=0, const unsigned int & _max=255);
     void trigADSR();
     
     void setNumInChain(unsigned int num) {

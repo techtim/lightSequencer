@@ -33,11 +33,11 @@ void LED::trigADSR() {
     ADSRoffset = 0;
 }
 
-void LED::setADSR(ofVec3f adsr){
+void LED::setADSR(const ofVec3f & adsr){
     setADSR(adsr.x, adsr.y, adsr.z);
 }
 
-void LED::setADSR(unsigned int _att, unsigned int _dec, unsigned int _rel, unsigned int _min, unsigned int _max){
+void LED::setADSR(const unsigned int & _att, const unsigned int & _dec,const unsigned int & _rel, const unsigned int & _min, const unsigned int & _max){
     att = _att, dec = _dec, rel = _rel, sus = 0, minValue = _min, maxValue = _max;
 }
 
@@ -96,13 +96,13 @@ void LED::setupDmxGui() {
 
     fDmxAddress = static_cast<float>(dmxStartAddress);
     dmxAddr = new ofxUINumberDialer(0, 512, &fDmxAddress, 0, "addr", OFX_UI_FONT_SMALL);
-    dmxType = LED_DMX_RGBA;
+    dmxType = LED_DMX_RGB;
 //    gui->addNumberDialer("addr", 1, 512, dmxStartAddress, 3)->setDrawOutline(true);
     gui->addWidgetDown(dmxAddr);
 
-    typesList = new ofxUIDropDownList(70, "RGB+A", dmxTypes, OFX_UI_FONT_SMALL);
+    typesList = new ofxUIDropDownList(70, "RGB", dmxTypes, OFX_UI_FONT_SMALL);
 
-    typesList->activateToggle("RGB+A");
+    typesList->activateToggle("RGB");
 //    typesList->setShowCurrentSelected(true);
     gui->addWidgetDown(typesList);
     
