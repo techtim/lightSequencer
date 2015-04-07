@@ -1,7 +1,7 @@
 #include "colorPicker.h"
 
 colorPicker::colorPicker():width(0),height(0),
-xPos(0),yPos(0), hueSpeed(0),
+xPos(0),yPos(0), hueSpeed(0), saturation(255),
 colorPos(0),triWidth(30),psyPos(0),evenCounter(0),colorPosStart(-1),colorPosEnd(-1)
 {
 
@@ -25,7 +25,10 @@ void colorPicker::setPosition(int x, int y){
 //    gui->addWidgetRight(psyButton);
     
     hueControl = new ofxUIMinimalSlider("speed", 0, 60, &hueSpeed, 128, 10);
+    satControl = new ofxUIMinimalSlider("satur", 0, 255, &saturation, 128, 10);
+    
     gui->addWidgetRight(hueControl);
+    gui->addWidgetRight(satControl);
     gui->autoSizeToFitWidgets();
     gui->setPosition(x, y+height);
 
@@ -50,7 +53,7 @@ bool colorPicker::isClicked(int x, int y, bool isDragged) {
             colorPosStart = colorPos;
             colorPosEnd = -1;
         }
-		color = HsvToRgb(colorPos, 255, 255);
+		color = HsvToRgb(colorPos, saturation, 255);
 		return true;
 	}
 //    printf("POS =%i, LEFT=%i, POS RIGHT=%i\n", colorPos, colorPosStart, colorPosEnd);
@@ -70,6 +73,14 @@ int colorPicker::getColorPos() {
     return colorPos;
 }
 
+const int colorPicker::getSaturation() {
+    return saturation;
+}
+
+void colorPicker::setSaturation(const float & sat) {
+    saturation = sat;
+}
+
 void colorPicker::draw()
 {
 	img.draw(xPos, yPos);
@@ -83,11 +94,9 @@ void colorPicker::draw()
         if (psyPos <= psyLimitLeft) evenCounter = 0;
         colorPos = psyPos;
 //        color.setHsb(psyPos, 255.0f, 255.0f);
-        color = HsvToRgb(psyPos, 255, 255);
+        color = HsvToRgb(psyPos, saturation, 255);
     } else {
-//        color.setHue(colorPos);
-
-        color = HsvToRgb(colorPos, 255, 255);
+        color = HsvToRgb(colorPos, saturation, 255);
 //        color = img.getColor(colorPos, 0);
     }
     
@@ -182,7 +191,7 @@ void colorPicker::newMidiMessage(ofxMidiMessage& msg) {
             //            printf("PICKER Knob CHAN: %i ID: %i VALUE: %i \n", args.channel, midiId, midiValue) ;
             int valueMapped = ofMap(msg.value, 0, 127, 0, 360);
             colorPos = valueMapped;
-            color = HsvToRgb(colorPos, 255, 255);
+            color = HsvToRgb(colorPos, saturation, 255);
 		}
     //    hueControl.receiveMidi(args);
 }

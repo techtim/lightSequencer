@@ -90,14 +90,16 @@ void ledPresets::save(int presNum, unsigned int genNum, Generator & gen) {
     presets[presNum].generators[genNum].fxMir   = gen.effects.mirrorButton->getValue() ? 1 : 0;
     presets[presNum].generators[genNum].fxMoveLeft   = gen.effects.moveLeftButton->getValue() ? 1 : 0;
     presets[presNum].generators[genNum].fxMoveRight   = gen.effects.moveRightButton->getValue() ? 1 : 0;
+    presets[presNum].generators[genNum].fxMoveUp = gen.effects.moveUpButton->getValue() ? 1 : 0;
     
     presets[presNum].generators[genNum].psyOn   = gen.hueLine.psyButton->getValue() ? 1 : 0;
     presets[presNum].generators[genNum].psySpeed= gen.hueLine.hueControl->getValue();
+    presets[presNum].generators[genNum].saturation = gen.hueLine.getSaturation();
     
 //    presets[presNum].generators[genNum].shapeType = gen.effects.getShapeType();
 
     
-    printf("%f , %f , %f, %d, %d",
+    printf("att: %f , dec: %f ,rel: %f,fxInv %d, %d",
            presets[presNum].generators[genNum].att,
            presets[presNum].generators[genNum].dec,
            presets[presNum].generators[genNum].rel,
@@ -141,6 +143,7 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
     ((ofxUIButton*)gen.effects.mirrorButton)->setValue(presets[presNum].generators[genNum].fxMir == 1 ? true : false);
     ((ofxUIButton*)gen.effects.moveRightButton)->setValue(presets[presNum].generators[genNum].fxMoveRight == 1 ? true : false);
     ((ofxUIButton*)gen.effects.moveLeftButton)->setValue(presets[presNum].generators[genNum].fxMoveLeft == 1 ? true : false);
+    ((ofxUIButton*)gen.effects.moveUpButton)->setValue(presets[presNum].generators[genNum].fxMoveUp == 1 ? true : false);
     
     gen.effects.retrigger();
 //    gen.effects.setShapeType(presets[presNum].generators[genNum].shapeType);
@@ -151,6 +154,7 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
         gen.hueLine.colorPos = presets[presNum].generators[genNum].colorPos;
         ((ofxUIButton*)gen.hueLine.psyButton)->setValue(presets[presNum].generators[genNum].psyOn ? true : false);
         ((ofxUIButton*)gen.hueLine.hueControl)->setValue(presets[presNum].generators[genNum].psySpeed);
+        gen.hueLine.setSaturation(presets[presNum].generators[genNum].saturation);
     }
     
     gen.getGui()->enable();
@@ -234,6 +238,7 @@ bool ledPresets::loadXML() {
             
             presets[i].generators[j].psyOn = XML.getValue("psyOn", 0);
             presets[i].generators[j].psySpeed = XML.getValue("psySpeed", 0);
+            presets[i].generators[j].saturation = XML.getValue("saturation", 0);
             
             XML.popTag();
         }
@@ -289,6 +294,7 @@ bool ledPresets::saveXML() {
                 TMP.setValue("GENERATOR:seq", presets[i].generators[j].sequence, lastTagNumber);
                 TMP.setValue("GENERATOR:psyOn", (presets[i].generators[j].psyOn ? 1 : 0) ,lastTagNumber);
                 TMP.setValue("GENERATOR:psySpeed", (int)presets[i].generators[j].psySpeed, lastTagNumber);
+                TMP.setValue("GENERATOR:saturation", (int)presets[i].generators[j].saturation, lastTagNumber);
             } else {
                 TMP.setValue("GENERATOR:att", 0, lastTagNumber);
                 TMP.setValue("GENERATOR:dec", 0, lastTagNumber);

@@ -152,7 +152,7 @@ void LED::setDmxType(int t) {
 }
 
 void LED::getDmx(ofxDmx &dmx) {
-    if (dmxStartAddress == 0) return;
+    if (dmxStartAddress == 0 || dmxStartAddress>DMX_NUM_CHANNELS) return;
 
     if (dmxColor != color) {
         switch (dmxType) {

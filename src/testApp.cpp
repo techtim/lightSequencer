@@ -303,7 +303,7 @@ void testApp::draw(){
 	}
     
 	ledControl.parseBitmap(Mixer->outputMixedChar());
-    ledControl.setSaturation(255-mixerSaturation->getValue());
+//    ledControl.setSaturation(255-mixerSaturation->getValue());
 
 	ledControl.print();
 

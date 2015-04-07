@@ -63,8 +63,11 @@ class ledPresets : public LEDS {
             unsigned int fxMir;
             unsigned int fxMoveRight;
             unsigned int fxMoveLeft;
+            unsigned int fxMoveUp;
+            unsigned int fxMoveDown;
             unsigned int psyOn;
             unsigned int psySpeed;
+            float saturation;
             unsigned int shapeType;
         };
     

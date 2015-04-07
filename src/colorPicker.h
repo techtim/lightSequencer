@@ -22,6 +22,9 @@ class colorPicker : public ofxMidiListener {
     int	 getClickedX(int x, int y);
     int	 getClickedY(int x, int y);
     int  getColorPos();
+    const int getSaturation();
+    void setSaturation(const float & sat);
+    
     
     int getHeight() { return height; };
     ofRectangle getPosition() { return ofRectangle(xPos, yPos, width, height); };
@@ -42,8 +45,10 @@ class colorPicker : public ofxMidiListener {
     ofxUISuperCanvas* gui;
     ofxUILabelToggle* psyButton;
     ofxUIMinimalSlider* hueControl;
+    ofxUIMinimalSlider* satControl;
     
     float hueSpeed;
+    float saturation;
     //---MIDI
     void setupMidi(unsigned int ident, unsigned int channel=1, unsigned int port = 0, unsigned int psy_bottom = 32, unsigned int psy_speed = 71);
 //    void receiveMidi(ofxMidiEventArgs &args);

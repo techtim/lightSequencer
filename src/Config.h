@@ -27,6 +27,7 @@
 
 #define DMX_CHANNELS_IN_PAR 4
 #define DMX_PORT "tty.usbserial-EN133019"
+#define DMX_NUM_CHANNELS 512
 
 #define MIDI_VOLUME_START_CC 110
 #define MIDI_MIX_SATURATION 103
@@ -39,7 +40,6 @@
 #define ABLETON_CTRL false;//true; //false;
 
 #define OSC_PORT_IN 7777
-
 
 enum ledDmxType
 {
@@ -62,6 +62,8 @@ enum ledDmxType
 //    196,57, 0, 17, 77, 97, 101,  196,
 //};
 
+
+//24x6
 const int DMX_ADDR_MAP[] =
 {
     253,256,259,262,265,268, 271,274,277,280,283,286, 0,0,0,0,0,0, 0,0,0,0,0,0,
@@ -72,5 +74,12 @@ const int DMX_ADDR_MAP[] =
     289,292,295,298,301,304, 307,310,313,316,319,322, 0,0,0,0,0,0, 0,0,0,0,0,0
     
 };
+
+//const int DMX_ADDR_MAP[] =
+//{
+//    1,4,7,10,13,16, 19,22,25,28,31,34, 37,40,43,46,49,52, 55,58,61,64,67,70, 73,76,79,82,85,88,
+//    91,94,97,100,103,106, 109,112,115,118,121,124, 127,130,133,136,139,142, 145,148,151,154,157,160, 163,166,169,172,175,178
+//};
+
 
 #endif
