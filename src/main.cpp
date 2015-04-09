@@ -10,7 +10,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 #endif
         ofPtr<ofAppGLFWWindow> window = ofPtr<ofAppGLFWWindow>(new ofAppGLFWWindow());
         // set width, height, mode (OF_WINDOW or OF_FULLSCREEN)
-        ofSetupOpenGL(window, 1200, 660, OF_WINDOW);
+        ofSetupOpenGL(window, 1440, 660, OF_WINDOW);
         
         // this kicks off the running of my app
         // can be OF_WINDOW or OF_FULLSCREEN

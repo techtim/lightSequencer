@@ -22,8 +22,8 @@
 
 #define PRESETS_NUM 32
 
-#define MATRIX_W 24
-#define MATRIX_H 6
+#define MATRIX_W 10
+#define MATRIX_H 4
 
 #define DMX_CHANNELS_IN_PAR 4
 #define DMX_PORT "tty.usbserial-EN133019"
@@ -49,6 +49,10 @@ enum ledDmxType
     LED_DMX_RGBW = 3,
     LED_DMX_W = 4
 };
+
+//static const string quantize[4] = {"4","8","16","32"};
+//static const vector<string> quantizeVec(quantize, quantize+4);
+
 
 //const std::string dt[5] = {"RGB","RGB+A","A+RGB","RGB+W","W"};
 //const std::vector<std::string> dmxTypes(dt, dt+5);

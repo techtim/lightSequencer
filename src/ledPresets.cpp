@@ -152,7 +152,6 @@ void ledPresets::load(int presNum, unsigned int genNum, Generator & gen, bool bL
 
     if (bLoadColor) {
         gen.hueLine.colorPos = presets[presNum].generators[genNum].colorPos;
-        ((ofxUIButton*)gen.hueLine.psyButton)->setValue(presets[presNum].generators[genNum].psyOn ? true : false);
         ((ofxUIButton*)gen.hueLine.hueControl)->setValue(presets[presNum].generators[genNum].psySpeed);
         gen.hueLine.setSaturation(presets[presNum].generators[genNum].saturation);
     }
@@ -221,6 +220,8 @@ bool ledPresets::loadXML() {
             presets[i].generators[j].fxMir = XML.getValue("fxMir", 0);
             presets[i].generators[j].fxMoveRight = XML.getValue("fxMoveRight", 0);
             presets[i].generators[j].fxMoveLeft = XML.getValue("fxMoveLeft", 0);
+            presets[i].generators[j].fxMoveUp = XML.getValue("fxMoveUp", 0);
+            presets[i].generators[j].fxMoveDown = XML.getValue("fxMoveDown", 0);
             presets[i].generators[j].shapeType = XML.getValue("shapeType", 0);
             presets[i].generators[j].colorPos = XML.getValue("colorPos", 0);
             
@@ -238,7 +239,7 @@ bool ledPresets::loadXML() {
             
             presets[i].generators[j].psyOn = XML.getValue("psyOn", 0);
             presets[i].generators[j].psySpeed = XML.getValue("psySpeed", 0);
-            presets[i].generators[j].saturation = XML.getValue("saturation", 0);
+            presets[i].generators[j].saturation = XML.getValue("saturation", 255);
             
             XML.popTag();
         }
@@ -277,6 +278,8 @@ bool ledPresets::saveXML() {
                 TMP.setValue("GENERATOR:fxMir", (int)presets[i].generators[j].fxMir, lastTagNumber);
                 TMP.setValue("GENERATOR:fxMoveRight", (int)presets[i].generators[j].fxMoveRight, lastTagNumber);
                 TMP.setValue("GENERATOR:fxMoveLeft", (int)presets[i].generators[j].fxMoveLeft, lastTagNumber);
+                TMP.setValue("GENERATOR:fxMoveUp", (int)presets[i].generators[j].fxMoveUp, lastTagNumber);
+                TMP.setValue("GENERATOR:fxMoveDown", (int)presets[i].generators[j].fxMoveDown, lastTagNumber);
                 TMP.setValue("GENERATOR:shapeType", (int)presets[i].generators[j].shapeType, lastTagNumber);
                 TMP.setValue("GENERATOR:colorPos", (int)presets[i].generators[j].colorPos, lastTagNumber);
                 

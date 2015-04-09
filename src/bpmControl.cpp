@@ -44,6 +44,13 @@ void bpmControl::setup(unsigned int x, unsigned int y, unsigned int wid, unsigne
 //   	DownBpm.setActictiveText("˯");
 }
 
+void bpmControl::processFrame(float* frame, int framesize){
+    liveAudioAnalysis.processFrame(frame, framesize);
+    if (liveAudioAnalysis.btrack.playbeat == 1){
+        liveAudioAnalysis.lastBeatTime = liveAudioAnalysis.aubioOnsetDetectionVector.size()-1;
+    }
+}
+
 void bpmControl::draw(){
 
     Sync.draw();
@@ -54,7 +61,7 @@ void bpmControl::draw(){
 
     if (Sync.isOn && (liveAudioAnalysis.aubioOnsetDetectionVector.size() - liveAudioAnalysis.lastBeatTime) < 10){
 		ofSetHexColor(0xFFFFFF);
-		ofCircle(leftX+width/4+50, leftY + 22, 20);
+		ofCircle(leftX+width/4+50, leftY + 22, 10);
 	}
 }
 

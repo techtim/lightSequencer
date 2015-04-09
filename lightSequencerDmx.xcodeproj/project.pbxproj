@@ -27,6 +27,7 @@
 		3A2CE8E11AA02557006F6EAC /* ofxMidiOut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2CE8C81AA02557006F6EAC /* ofxMidiOut.cpp */; };
 		3A2CE8E21AA02557006F6EAC /* RtMidi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A2CE8D81AA02557006F6EAC /* RtMidi.cpp */; };
 		3A2CE8E31AA02557006F6EAC /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A2CE8DA1AA02557006F6EAC /* CoreMIDI.framework */; };
+		3A4104461AD6C33800A5826E /* WaveGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A4104441AD6C33800A5826E /* WaveGenerator.cpp */; };
 		3A5ADF061969B23900D3C049 /* Syphon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A5ADF051969B23900D3C049 /* Syphon.framework */; };
 		3A5ADF071969B24800D3C049 /* Syphon.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A5ADF051969B23900D3C049 /* Syphon.framework */; };
 		3AAECB0E191D9CB50095C0D0 /* CoreMIDI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AAECB0D191D9CB50095C0D0 /* CoreMIDI.framework */; };
@@ -228,6 +229,8 @@
 		3A2CE8D81AA02557006F6EAC /* RtMidi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
 		3A2CE8D91AA02557006F6EAC /* RtMidi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RtMidi.h; sourceTree = "<group>"; };
 		3A2CE8DA1AA02557006F6EAC /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = ../../../../../../../../System/Library/Frameworks/CoreMIDI.framework; sourceTree = "<group>"; };
+		3A4104441AD6C33800A5826E /* WaveGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WaveGenerator.cpp; sourceTree = "<group>"; };
+		3A4104451AD6C33800A5826E /* WaveGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaveGenerator.h; sourceTree = "<group>"; };
 		3A5ADF051969B23900D3C049 /* Syphon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Syphon.framework; path = System/Library/Frameworks/Syphon.framework; sourceTree = SDKROOT; };
 		3AAECB0D191D9CB50095C0D0 /* CoreMIDI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMIDI.framework; path = System/Library/Frameworks/CoreMIDI.framework; sourceTree = SDKROOT; };
 		3AAECB3F191D9D4C0095C0D0 /* aubioOSX.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = aubioOSX.a; sourceTree = "<group>"; };
@@ -949,6 +952,10 @@
 				3AE02C2B19D6E6D5001DA516 /* testApp.cpp */,
 				3AE02C2C19D6E6D5001DA516 /* bitmapMixer.cpp */,
 				3AE02C2D19D6E6D5001DA516 /* bitmapMixer.h */,
+				3ABBDB511AD3F200005E9394 /* MotionControl.cpp */,
+				3ABBDB521AD3F200005E9394 /* MotionControl.h */,
+				3A4104441AD6C33800A5826E /* WaveGenerator.cpp */,
+				3A4104451AD6C33800A5826E /* WaveGenerator.h */,
 				3AE02C4519D6E70B001DA516 /* Generator */,
 				3AE02C2E19D6E6D5001DA516 /* ledPresets.h */,
 				3AE02C2F19D6E6D5001DA516 /* ledPresets.cpp */,
@@ -968,8 +975,6 @@
 				3A000B461A7E5050002E5092 /* ControlLeds.h */,
 				3A15D0011AB2F1F500B94A9C /* midiControl.cpp */,
 				3A15D0021AB2F1F500B94A9C /* midiControl.h */,
-				3ABBDB511AD3F200005E9394 /* MotionControl.cpp */,
-				3ABBDB521AD3F200005E9394 /* MotionControl.h */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -1154,6 +1159,7 @@
 				F440B307990F8F5CE40B9111 /* ofxUIMovingGraph.cpp in Sources */,
 				222C3AB10FA3158602718602 /* ofxUIMultiImageButton.cpp in Sources */,
 				F9C20834354ACC8337320B8C /* ofxUIMultiImageToggle.cpp in Sources */,
+				3A4104461AD6C33800A5826E /* WaveGenerator.cpp in Sources */,
 				3AE02C5A19D6E71C001DA516 /* dmxLEDS.cpp in Sources */,
 				3AAECB5C191DA2A10095C0D0 /* ofxTCPServer.cpp in Sources */,
 				E3D59A6B55F05669B3FBF8BD /* ofxUINumberDialer.cpp in Sources */,

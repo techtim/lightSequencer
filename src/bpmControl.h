@@ -34,12 +34,7 @@ class bpmControl : public ofxMidiListener {
     
 
     LiveAudioAnalysis liveAudioAnalysis;
-    void processFrame(float* frame, int framesize){
-        liveAudioAnalysis.processFrame(frame, framesize);
-        if (liveAudioAnalysis.btrack.playbeat == 1){
-			liveAudioAnalysis.lastBeatTime = liveAudioAnalysis.aubioOnsetDetectionVector.size()-1;
-		}
-    }
+    void processFrame(float* frame, int framesize);
 
     ofTrueTypeFont verdana;
 	ofTrueTypeFont verdana2;

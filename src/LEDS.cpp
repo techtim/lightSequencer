@@ -3,6 +3,7 @@
 LEDS::LEDS()
 {
     bGuiActive = true;
+    bChangedAddrMode = false;
 };
 
 LEDS::~LEDS()
@@ -34,6 +35,8 @@ void LEDS::set(int col, int row, int cell, int x, int y, int spac, bool setAllWh
     xRight = x + columns * cellSize + (columns-1) * mSpace;
     yRight = y + rows * cellSize + (rows-1) * mSpace;
 
+    region = ofRectangle(xLeft, yLeft, xRight-xLeft, yRight-yLeft);
+    
 	leds = new LED [columns * rows];
     ledLastClicked = -1; // mean no clicks made
 	bitmap = new ofColor [columns * rows];
@@ -154,6 +157,11 @@ void LEDS::update()
 {
     for (int i = 0; i < ledsNumber; i++)
         leds[i].update();
+
+    if (bChangedAddrMode && !inAddrMode) {
+        for (unsigned int i = 0; i < columns * rows; i++) leds[i].showGui(false);
+        bChangedAddrMode = false;
+    }
 }
 
 void LEDS::print(bool with_alpha)
@@ -315,7 +323,7 @@ void LEDS::setClicked(int x, int y, ofColor newColor, bool isDragged)
             }
         }
 
-    if (inAddrMode)
+    if (inAddrMode) {
         for (unsigned int i = 0; i < columns * rows; i++) {
             if (leds[i].isEdit()) {
                 leds[i].gui->setPosition(xLeft, yLeft-leds[i].gui->getRect()->height);
@@ -324,6 +332,7 @@ void LEDS::setClicked(int x, int y, ofColor newColor, bool isDragged)
                 leds[i].showGui(false);
             }
         }
+    }
 }
 
 int LEDS::numClicked(int x, int y, ofColor newColor)

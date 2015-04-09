@@ -59,10 +59,12 @@ class LEDS: public ofxMidiListener {
         void saveDmxConfig();
         void loadDmxConfig();
     
-        bool inAddrMode;
+        bool inAddrMode, bChangedAddrMode;
         void setAddrMode(bool is_on) {
             inAddrMode = is_on;
+            bChangedAddrMode = true;
         }
+
         unsigned int ledsInChain;
     
         void setupTexture(int w, int h);

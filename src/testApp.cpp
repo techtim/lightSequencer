@@ -60,7 +60,7 @@ void testApp::setup(){
     
     mixerRegion.leftX = controllersWidth+cntrlOffsetX+5;
 	mixerRegion.leftY = 0;
-	mixerRegion.rightX = ofGetWidth()-controllersWidth-5;
+	mixerRegion.rightX = controllersWidth*2;
 	mixerRegion.rightY = winHigh;
 
 	region = new Region[controllersNum];
@@ -118,7 +118,7 @@ void testApp::setup(){
 	actColor.set(0, 50, 200);
 	inactColor.set(0, 0, 0);
 	maxSteps = 16;
-	limitSteps = 128;
+	limitSteps = 256;
 	seqCellSize = 40;
 	seqCellSpace = 5;
     
@@ -139,6 +139,8 @@ void testApp::setup(){
         Gen[i].setActive(false);
     }
 
+    // --- MODULES ---
+    
     bpmCtrl.setup(
                   mixerRegion.leftX, mixerRegion.leftY + 50,
                   mixerRegion.rightX - mixerRegion.leftX, mixerRegion.leftY+50
@@ -153,19 +155,19 @@ void testApp::setup(){
 
 //	ledControl.set(matrixW, matrixH, ctrlLedSize,
 //                   mixerRegion.leftX +  matrixSpace*(matrixW-1)/2 - 30, winHigh/2-50, matrixSpace);
-//    ledControl.set(<#int col#>, <#int row#>, <#int cell#>, <#int x#>, <#int y#>, <#int spac#>)
 	ledControl.set(matrixW, matrixH, ctrlLedSize,
                    mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/2.5-ctrlLedSize/2, matrixSpace);
 //    ledControl.set(matrixW, matrixH, ctrlLedSize,
 //                   mixerRegion.leftX + mixerWidth/2-(ctrlLedSize+matrixSpace)*matrixW/2, winHigh/2, matrixSpace);
 
-    //    ledControl.set(matrixW, matrixH, 200, mixerRegion.leftX + 80, winHigh/2-50, matrixSpace);
 	ledControl.setClickedAll();
     ledControl.setupDmx();
 //    ledControl.setupTexture(DISPLAY_W, DISPLAY_H);
 
 	Mixer = new bitmapMixer;
 	Mixer->setup(controllersNum, matrixW, matrixH);
+    
+    motionControl.setup(mixerRegion.rightX+controllersWidth, 10, 200, ofGetHeight(), matrixW, matrixH);
     
     //---Buttons---
     
@@ -177,13 +179,8 @@ void testApp::setup(){
     gui->addWidget(Play);
     
     Start = new ofxUIMultiImageButton(mixerRegion.leftX+mixerWidth/2, 10, 32, 32, false, "GUI/start_.png", "START");
-//    Start->setLabelVisible(false);
     gui->addWidget(Start);
-    
-    //    ArdButton.setup(winWidth/2 - 95, 60, 50, 30, true);
-    //    ArdButton.setActictiveText("Serial");
-    //    ArdButton.setFontSize(12);
-    
+
     //    MidiSelect.setup(winWidth/2 - 150, 0, 50, 30, true);
     //	MidiSelect.setActictiveText("Ableton");
     //    MidiSelect.setInactictiveText("Kontrol");
@@ -243,7 +240,8 @@ void testApp::update(){
     if (OscButton->getValue()) TCP.update();
 	if (frameRate/30 == frameCount) frameCount = 0;
     
-    ledControl.setAddrMode(LedAddrMode->getValue());
+    motionControl.update(lengthOfQuarterBeatInSamples, quarterBeatCounter);
+    
 //    if (bpmCtrl.Sync.isOn &&
 //    (bpmCtrl.liveAudioAnalysis.aubioOnsetDetectionVector.size() - bpmCtrl.liveAudioAnalysis.lastBeatTime) < 40){
 //        midiTapOut.sendControlChange(1, 2, 127);
@@ -265,7 +263,7 @@ void testApp::update(){
         
         if (addr[0] == "wii" ) {
             
-            if (addr[3] == "B") {;}
+            if (addr[3] == "B") mixerBrightness->setValue(m.getArgAsInt32(0));
                 
             if (addr[3] == "A") mixerSaturation->setValue(m.getArgAsInt32(0));
             
@@ -287,7 +285,8 @@ void testApp::draw(){
 //    printf(BPMstring.data());
 
     Presets.draw();
-
+    motionControl.draw();
+    
     Mixer->setSaturation(255-mixerSaturation->getValue());
     Mixer->setBrightness(mixerBrightness->getValue());
 
@@ -301,7 +300,7 @@ void testApp::draw(){
 		seqBitmap = Gen[i].getSequencedBitmap();
 		Mixer->feedBitmap(seqBitmap, i, 255);
 	}
-    
+
 	ledControl.parseBitmap(Mixer->outputMixedChar());
 //    ledControl.setSaturation(255-mixerSaturation->getValue());
 
@@ -420,7 +419,7 @@ void testApp::guiEvent(ofxUIEventArgs &e){
         quarterBeatCounter = 0;
     }
     else if (e.widget == LedAddrMode) {
-        
+        ledControl.setAddrMode(LedAddrMode->getValue());
     }
     else if (e.widget == OscButton) {
         if (!TCP.weConnected) TCP.setup();
@@ -474,7 +473,6 @@ void testApp::audioInputListener(ofxAudioEventArgs &args){
 		}
 		
 		bpmCtrl.processFrame(&leftAudioIn[0], BUFFER_SIZE);
-
 //		bufferCounter++;
 	}//end if we have finished set up the floats to hold the audio
 }

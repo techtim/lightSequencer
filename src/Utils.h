@@ -20,6 +20,12 @@
         float out = ofMap(pct, 0,1, outMin, outMax, true);
         return out;
     };
+
+//    float squareWave(float freq, float t) {
+//      
+//        return sin(freq*t)+sin(3*freq*t)/3+sin(5*freq*t)/5+sin(7*freq*t)/7;
+//
+//    };
 //};
 
 #endif

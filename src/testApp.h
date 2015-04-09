@@ -19,6 +19,7 @@
 #include "ofxUi.h"
 #include "ofxOsc.h"
 #include "ofxDmx.h"
+#include "MotionControl.h"
 
 #include "Generator.h"
 #include "tcpControl.h"
@@ -130,6 +131,8 @@ public:
     tcpControl TCP;
     ofxOscSender oscSender;
 
+    MotionControl motionControl;
+    
 	// -- Color --
 	int hueSelect;
 	int saturSelect;
