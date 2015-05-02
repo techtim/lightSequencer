@@ -249,7 +249,7 @@ void Generator::newMidiMessage(ofxMidiMessage &args) {
         volume->setValueHigh(ofMap(midiValue, 0,128,0,255));
     }
 
-    if (midiId == MIDI_SEQ_START_CC && midiValue == 127) effects.retrigger();
+    if (midiId == MIDI_SEQ_START_CC && midiValue == 127) effects.parseBitmap(ledMatrix.getBitmapChar()), effects.retrigger();
 
     if (!active) return;
 //    printf("active: %i, matrMode: %i",midiSeqActivationStartCC, matrixSequenceMode? 1 : 0);

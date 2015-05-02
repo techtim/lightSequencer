@@ -35,6 +35,8 @@ class LEDS: public ofxMidiListener {
 		ofColor * bitmap;
 		unsigned char * bitmapChar;
 
+        vector<LED> & getLeds();
+
         void setSaturation(float sat);
         void setBrightness(float bright);
 
@@ -71,7 +73,7 @@ class LEDS: public ofxMidiListener {
         ofTexture * getTexture(int shape = 0);
         ofTexture * tex;
         unsigned char * texPixels;
-        LED *leds; // array of LED class
+        vector<LED> leds; // array of LED class
         int ledLastClicked;
         
         bool changedBitmap;
@@ -110,7 +112,7 @@ class LEDS: public ofxMidiListener {
 
         void setMidiActive(bool is) {
             midiActive = is;
-            is? midiOut.sendControlChange(midiChannel, midiActivationCC, 127):
+            is && midiOut.isOpen()? midiOut.sendControlChange(midiChannel, midiActivationCC, 127):
                 midiOut.sendControlChange(midiChannel, midiActivationCC, 0);
         }
 

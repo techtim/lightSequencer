@@ -23,16 +23,18 @@ public:
     void update(float lengthOfQuarterBeatInSamples, int quarterBeatCounter);
     void draw();
     
+    void setEnable(bool bEnabled);
+    
     void mousePressed(ofMouseEventArgs & args);
     void mouseDragged(ofMouseEventArgs & args);
     void keyPressed(ofKeyEventArgs & k);
 
     void guiEvent(ofxUIEventArgs &e);
     void getDmx(ofxDmx &dmx);
-    void setupLedDmx(vector<LED> &_leds);
+    void setupDmxConfig(vector<LED> &_leds);
 
     float squareWave(float freq, float t);
-    
+    float triWave(float freq, float t);
 private:
     int slidersNum, slidersLen;
     int matrixCellSize, matrixSpace;
@@ -42,14 +44,26 @@ private:
     int quarterBeatCounter;
 //    std::shared_ptr<unsigned int> cntr;
 
-    float cntr;
-    float panChannel, panOffset, panSpeed, panWave, panFrom, panTo;
-    float tiltChannel, tiltOffeset, tiltSpeed, tiltWave, tiltFrom, tiltTo;
+    float cntr, triangleDelta;
+    float panChannel, panPhase, panSpeed, panWave, panFrom, panTo;
+    float tiltChannel, tiltPhase, tiltSpeed, tiltWave, tiltFrom, tiltTo;
+    
+    bool bSavePreset;
+    bool bEnable;
+
+    LEDS tiltLeds;
+    LEDS panLeds;
     
     // --- UI ---
     ofxUIDropDownList* quantizeList;
     ofxUISuperCanvas * sliders;
     ofxUISuperCanvas * waves;
+
+    ofxUISuperCanvas * radios;
+    ofxUILabelToggle * buttonSavePres;
+    
+    ofxUIMovingGraph* tiltGraph;
+    ofxUIMovingGraph* panGraph;
 };
 
 

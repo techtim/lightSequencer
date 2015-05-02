@@ -20,22 +20,27 @@
 #define COLUMNS_WIDTH 20
 #define COLUMNS_OFFSET 40
 
+#define CONTROLLERS_NUM 4
 #define PRESETS_NUM 32
 
-#define MATRIX_W 10
+#define MATRIX_W 6
 #define MATRIX_H 4
 
 #define DMX_CHANNELS_IN_PAR 4
 #define DMX_PORT "tty.usbserial-EN133019"
 #define DMX_NUM_CHANNELS 512
 
+
 #define MIDI_VOLUME_START_CC 110
 #define MIDI_MIX_SATURATION 103
 #define MIDI_MIX_BRIGHTNESS 70
 #define MIDI_SEQ_PLAY_CC 41
 #define MIDI_SEQ_START_CC 43
+#define MIDI_HUE_CONTROL_CC 74
+#define MIDI_SEQ_ACTIVATION_START_CC 1
+#define MIDI_LED_MATRIX_ACTIVATION_CC 45
+#define MIDI_SEQ_BEGIN_CC 10
 #define MIDI_PRESET_BEGIN_CC 10
-
 
 #define ABLETON_CTRL false;//true; //false;
 
@@ -65,6 +70,8 @@ enum ledDmxType
 //    145,53, 33, 13,73, 93, 105,  129,
 //    196,57, 0, 17, 77, 97, 101,  196,
 //};
+
+
 
 
 //24x6

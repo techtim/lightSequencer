@@ -29,7 +29,6 @@ void testApp::setup(){
 	
     //---MIDI---
     abletonCtrl = ABLETON_CTRL;
-    
 
 	//---BPM
     leftAudioIn.assign(BUFFER_SIZE, 0.0);
@@ -41,11 +40,7 @@ void testApp::setup(){
 	setInputDevice(inputDeviceID);//includes calling the setup routine etc
 	ofAddListener(inputSoundStream.audioReceivedEvent, this, &testApp::audioInputListener);
 #endif
-
-    verdana14.loadFont("../data/verdana.ttf", 14, true, true);
-	verdana14.setLineHeight(14.0f);
-	verdana14.setLetterSpacing(1.035);
-    
+   
     verdana30.loadFont("../data/verdana.ttf", 14, true, true);
 	verdana30.setLineHeight(14.0f);
 	verdana30.setLetterSpacing(1.035);
@@ -53,7 +48,6 @@ void testApp::setup(){
     
 
 	//---Layout
-	controllersNum = 4;
 	controllersWidth = 380;
     controllersHeight= 300;
     unsigned int cntrlOffsetX = 5;
@@ -63,7 +57,7 @@ void testApp::setup(){
 	mixerRegion.rightX = controllersWidth*2;
 	mixerRegion.rightY = winHigh;
 
-	region = new Region[controllersNum];
+	region = new Region[CONTROLLERS_NUM];
 	region[0].leftX= cntrlOffsetX;
 	region[0].leftY= 0;
 	region[2].leftX = cntrlOffsetX;
@@ -86,18 +80,8 @@ void testApp::setup(){
 	//---Matrix---
     matrixW = MATRIX_W;
     matrixH = MATRIX_H;
-	
-    matrixSpace = 2;
-//    matrixCellSize = controllersWidth/(matrixW+matrixSpace);
-    matrixCellSize=50;
     
 //########################
-	//---Color---
-    saturSelect = 255;
-    valueSelect = 255;
-	
-	colorSelect = new ofColor[controllersNum];
-	for (int i=0; i < controllersNum; i++) colorSelect[i].set(255.0f, 255.0f, 255.0f, 255.0f);
 
 	//---Time Sound---
     BPM = 120;
@@ -114,26 +98,15 @@ void testApp::setup(){
     pos = 0; // running sample count
     
 	// --- SEQ ---
-	selectColor.set(0,200,50);
-	actColor.set(0, 50, 200);
-	inactColor.set(0, 0, 0);
-	maxSteps = 16;
-	limitSteps = 256;
-	seqCellSize = 40;
-	seqCellSpace = 5;
-    
-    midiSeqActivationStartCC = 1;
-    midiSeqBeginCC = 10;
-	midiPresetBeginCC = 50;
-    midiHueControlCC = 74;
-	
-    midiLedMatrixActivationCC = 45;
 
+	limitSteps = 256;
+
+    matrixSpace = 2;
     // --- GENERATORS ---
     
-	Gen = new Generator[controllersNum];
+	Gen = new Generator[CONTROLLERS_NUM];
     
-    for (int i=0; i<controllersNum; i++)
+    for (int i=0; i<CONTROLLERS_NUM; i++)
 	{
 		Gen[i].setup(region[i].leftX, region[i].leftY, controllersWidth, controllersHeight, matrixW, matrixH, (i>1?true:false), i);
         Gen[i].setActive(false);
@@ -165,10 +138,10 @@ void testApp::setup(){
 //    ledControl.setupTexture(DISPLAY_W, DISPLAY_H);
 
 	Mixer = new bitmapMixer;
-	Mixer->setup(controllersNum, matrixW, matrixH);
+	Mixer->setup(CONTROLLERS_NUM, matrixW, matrixH);
     
-    motionControl.setup(mixerRegion.rightX+controllersWidth, 10, 200, ofGetHeight(), matrixW, matrixH);
-    
+    motionControl.setup(mixerRegion.rightX+controllersWidth, 0, 200, ofGetHeight(), matrixW, matrixH);
+    motionControl.setEnable(true);
     //---Buttons---
     
     gui = new ofxUISuperCanvas("");
@@ -189,6 +162,9 @@ void testApp::setup(){
     LedAddrMode = new ofxUILabelToggle("Addr Mode", false, 70, 10, Start->getRect()->x+Start->getRect()->width+10, 20, OFX_UI_FONT_SMALL );
 
     gui->addWidget(LedAddrMode);
+    bMotionEnable = true;
+    MotionEnable = new ofxUILabelToggle("Motion", &bMotionEnable, 30);
+//    gui->addWidget(MotionEnable);
     
     OscButton = new ofxUILabelToggle("OSC", false, 30, 10, mixerRegion.leftX+60, 60 );
 //    gui->addWidget(OscButton);
@@ -290,7 +266,7 @@ void testApp::draw(){
     Mixer->setSaturation(255-mixerSaturation->getValue());
     Mixer->setBrightness(mixerBrightness->getValue());
 
-	for (int i=0; i<controllersNum; i++)
+	for (int i=0; i<CONTROLLERS_NUM; i++)
 	{
 		ofSetColor(0, 200, 55);
 		
@@ -308,6 +284,7 @@ void testApp::draw(){
 
     if (ofGetFrameNum()%2==0) {
         ledControl.getDmx(dmx);
+        motionControl.getDmx(dmx);
         if(dmx.isConnected()) {
             dmx.update();
         }
@@ -353,20 +330,7 @@ void testApp::keyPressed(int key){
 }
 
 void testApp::keyReleased(int key) {
-    //cout << (0x0400) << endl;
-    //cout << (101 | OF_KEY_MODIFIER) << " " << key << endl;
-//    ofxFensterManager::getWindowById  ofxFenster* proj_win=
-//    ofxDisplayList displays = ofxDisplayManager::get()->getDisplays();
-//	cout << "NUMBER OF DISPLAYS FOUND " << displays.size()<< endl;
-//	ofxDisplay* display = displays[0];
-//    if(key=='f') {
-//        if (projector_id == win->id) {
-//            win->windowResized(PROJECTOR_W, PROJECTOR_H);
-//        } else {
-//            win->windowResized(DISPLAY_W, DISPLAY_H);
-//        }
-//        win->toggleFullscreen();
-//    }
+
     if(key=='f') {
         ofToggleFullscreen();  
     }
@@ -420,9 +384,12 @@ void testApp::guiEvent(ofxUIEventArgs &e){
     }
     else if (e.widget == LedAddrMode) {
         ledControl.setAddrMode(LedAddrMode->getValue());
+        motionControl.setupDmxConfig(ledControl.getLeds());
     }
     else if (e.widget == OscButton) {
         if (!TCP.weConnected) TCP.setup();
+    } else if (e.widget == MotionEnable) {
+        motionControl.setEnable(bMotionEnable);
     }
 }
 
@@ -436,10 +403,7 @@ void testApp::exit()
 #endif
     
 	delete [] region;
-	delete [] colorSelect;
-
-//	delete [] Gen; # don't know why "pointer being freed was not allocated"
-    
+    delete [] Gen;
 	delete Mixer;
 }
 
@@ -473,7 +437,7 @@ void testApp::audioInputListener(ofxAudioEventArgs &args){
 		}
 		
 		bpmCtrl.processFrame(&leftAudioIn[0], BUFFER_SIZE);
-//		bufferCounter++;
+
 	}//end if we have finished set up the floats to hold the audio
 }
 
@@ -528,17 +492,17 @@ void testApp::setupMidi() {
             break;
         }
     }
-//    midiOutPort = 0;
-    midiBeat.openPort(0);
+//    midiOutPort = 100;
+//    midiBeat.openPort(0);
     
     midiTapPort = 100; // midiOut.getPortByName("IAC Driver IAC_Bus_2");
     
-	if (midiInPort != 100 && midiOutPort != 100) {
+	if (midiInPort != 100 || midiOutPort != 100) {
         if (bMidiPortClosed) {
 //            midiIn.closePort();
 //            midiOut.closePort();
-            midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
-            midiOut.openPort(midiOutPort);
+            if (midiInPort != 100) midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+            if (midiOutPort != 100) midiOut.openPort(midiOutPort);
             bMidiPortClosed = false;
             
 //            Play->setupMidi(41, 1, midiInPort, midiOutPort);
@@ -549,13 +513,13 @@ void testApp::setupMidi() {
             bpmCtrl.setupMidi(0, 1, midiInPort, midiOutPort);
             
             int midiChannel;
-            for (int i=0; i<controllersNum; i++)
+            for (int i=0; i<CONTROLLERS_NUM; i++)
             {
                 //        midiChannel = i+1;
                 midiChannel = 1;
                 Gen[i].setupMidi(midiInPort, midiOutPort,
-                                 (abletonCtrl? 0 : midiSeqActivationStartCC+i), midiSeqBeginCC,
-                                 (abletonCtrl? 0 : midiLedMatrixActivationCC), (midiHueControlCC+i),
+                                 (abletonCtrl? 0 : MIDI_SEQ_ACTIVATION_START_CC+i), MIDI_SEQ_BEGIN_CC,
+                                 (abletonCtrl? 0 : MIDI_LED_MATRIX_ACTIVATION_CC), (MIDI_HUE_CONTROL_CC+i),
                                  midiChannel);
                 Gen[i].setActive(abletonCtrl ? true : false);
             }
@@ -585,11 +549,11 @@ void testApp::newMidiMessage(ofxMidiMessage& args) {
     if (midiId == MIDI_SEQ_PLAY_CC && midiValue == 127) Play->setValue(!Play->getValue());
     // Turn Off other Sequencers except now selected
 //    if (!abletonCtrl) {
-    if (midiId >= midiSeqActivationStartCC && midiId < midiSeqActivationStartCC+controllersNum && midiValue == 127)
+    if (midiId >= MIDI_SEQ_ACTIVATION_START_CC && midiId < MIDI_SEQ_ACTIVATION_START_CC+CONTROLLERS_NUM && midiValue == 127)
         {
-            Gen[midiId-midiSeqActivationStartCC];
-            bool act = Gen[midiId-midiSeqActivationStartCC].isActive();
-            unsigned int num = midiId-midiSeqActivationStartCC;
+            Gen[midiId-MIDI_SEQ_ACTIVATION_START_CC];
+            bool act = Gen[midiId-MIDI_SEQ_ACTIVATION_START_CC].isActive();
+            unsigned int num = midiId-MIDI_SEQ_ACTIVATION_START_CC;
             if (act) {
                 Gen[num].Sequencer.setMidiActive(false), Gen[num].ledMatrix.setMidiActive(false);
                 Gen[num].setActive(false);
@@ -598,19 +562,7 @@ void testApp::newMidiMessage(ofxMidiMessage& args) {
             };
 
         }
-//            Gen[i].isActive();
-    
-//            for (int i = 0; i < controllersNum; i++) {
-//                if (midiId != midiSeqActivationStartCC + i) { 
-//                  Gen[i].Sequencer.setMidiActive(false), Gen[i].ledMatrix.setMidiActive(false);
-//                    Gen[i].setActive(false);
-//                    Gen[i].isActive();
-//                } else {
-//                    Gen[i].setActive(true);
-//                };
-//                midiOut.sendControlChange(midiPort, midiSeqActivationStartCC+i, 127);
-//            Gen[midiId-midiSeqActivationStartCC].setActive(true);
-//            }
+
     bool bGenActive = false;
     for (int i=0; i<4; i++) {
         if (Gen[i].isActive()) bGenActive=true;

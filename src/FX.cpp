@@ -142,7 +142,7 @@ void FX::moveRight() {
     if (!setupFinished || !moveRightButton->getValue()) return;
 
     if (!bRetriger)
-        for (int row=1;row<=rows; row++) {
+        for (int row=0;row<=rows; row++) {
             LED tmp = leds[row*columns-1];
             for (int j=1; j<columns; j++) {
                 leds[row*columns-j] = leds[row*columns-j-1];

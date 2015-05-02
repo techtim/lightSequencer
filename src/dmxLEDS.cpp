@@ -16,7 +16,8 @@ DmxLEDS::DmxLEDS()
 
 DmxLEDS::~DmxLEDS()
 {
-	delete [] leds;
+//	delete [] leds;
+    leds.clear();
 	delete [] bitmap;
 	delete [] bitmapChar;
 }

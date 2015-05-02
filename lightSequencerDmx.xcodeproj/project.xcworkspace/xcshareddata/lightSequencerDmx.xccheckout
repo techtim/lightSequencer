@@ -14,6 +14,8 @@
 		<string>https://github.com/hideyukisaito/ofxOsc.git</string>
 		<key>1C584D82D8F91B619E103DBEA051F0CCC0070ED3</key>
 		<string>https://github.com/kylemcdonald/ofxDmx.git</string>
+		<key>3F2DE5DB699805D0DBD2A598DC1E5F4D06AE884A</key>
+		<string>https://github.com/hiroyuki/ofxArtnet.git</string>
 		<key>5D667B2E28949AE88EF0D88717D51BF45FBA1DE2</key>
 		<string>https://github.com/Venetian/ofxPortaudioSoundstream.git</string>
 		<key>7C7DB0FBD95D6C95635F39A120E97A11D933F54F</key>
@@ -24,6 +26,8 @@
 		<string>https://github.com/danomatika/ofxMidi.git</string>
 		<key>BECD090E7B2542DF4B3665BBBFEDA68FA5148308</key>
 		<string>https://github.com/techtim/lightSequencer.git</string>
+		<key>F080FE456D2598C8CEBB59BC836218BE8B5468F4</key>
+		<string>https://github.com/ofTheo/ofxAppGLFWWindowMulti.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>lightSequencerDmx.xcodeproj</string>
@@ -33,6 +37,8 @@
 		<string>../../../addons/ofxOsc</string>
 		<key>1C584D82D8F91B619E103DBEA051F0CCC0070ED3</key>
 		<string>../../../addons/ofxDmx</string>
+		<key>3F2DE5DB699805D0DBD2A598DC1E5F4D06AE884A</key>
+		<string>../../../addons/ofxArtnet</string>
 		<key>5D667B2E28949AE88EF0D88717D51BF45FBA1DE2</key>
 		<string>../../../addons/ofxPortaudioSoundstream</string>
 		<key>7C7DB0FBD95D6C95635F39A120E97A11D933F54F</key>
@@ -43,6 +49,8 @@
 		<string>../../../addons/ofxMidi</string>
 		<key>BECD090E7B2542DF4B3665BBBFEDA68FA5148308</key>
 		<string>../..</string>
+		<key>F080FE456D2598C8CEBB59BC836218BE8B5468F4</key>
+		<string>../../../addons/ofxAppGLFWWindowMulti</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/techtim/lightSequencer.git</string>
@@ -59,6 +67,22 @@
 			<string>BECD090E7B2542DF4B3665BBBFEDA68FA5148308</string>
 			<key>IDESourceControlWCCName</key>
 			<string>lightSequencer</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>F080FE456D2598C8CEBB59BC836218BE8B5468F4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxAppGLFWWindowMulti</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3F2DE5DB699805D0DBD2A598DC1E5F4D06AE884A</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ofxArtnet</string>
 		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>

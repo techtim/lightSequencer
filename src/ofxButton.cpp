@@ -98,7 +98,7 @@ void ofxButton::draw() {
 	ofSetColor(50, 50, 50);
     
     // Send MIDI data
-    if (midiActive) midiOut.sendControlChange(midiChannel, midiId, isOn ? 127 : 0); 
+    if (midiActive && midiOut.isOpen()) midiOut.sendControlChange(midiChannel, midiId, isOn ? 127 : 0);
     
 	// if a toggle
 	if (isOn)

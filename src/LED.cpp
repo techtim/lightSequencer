@@ -11,7 +11,9 @@ LED::LED()
     minValue = 0;
     maxValue = 255;
     ADSRoffset = 0;
-    dmxStartAddress = 0;
+    dmxStartAddress = fDmxAddress = 0.f;
+    dmxColorOffset = fDmxColorOffset = 0.f;
+    att = dec = sus = rel = 0;
 }
 
 LED::LED(int xL, int yL, int xR, int yR)
@@ -21,7 +23,7 @@ LED::LED(int xL, int yL, int xR, int yR)
     
 //    dmxStartAddress = 1 + numInChain * DMX_CHANNELS_IN_PAR;
 
-};
+}
 
 void LED::position(int xL, int yL, int xR, int yR)
 {
@@ -84,21 +86,18 @@ bool LED::isEdit() {
     return bEdit;
 }
 
-void LED::setDmxAddress(unsigned int num) {
-    
-    dmxStartAddress = num;
-    setupDmxGui();
-}
-
 void LED::setupDmxGui() {
     gui = new ofxUISuperCanvas("led-"+ofToString(dmxStartAddress),OFX_UI_FONT_SMALL);
     //    gui->setGlobalSliderHeight(5);
 
     fDmxAddress = static_cast<float>(dmxStartAddress);
+    fDmxColorOffset = static_cast<float>(dmxColorOffset);
     dmxAddr = new ofxUINumberDialer(0, 512, &fDmxAddress, 0, "addr", OFX_UI_FONT_SMALL);
+    dmxColorOff = new ofxUINumberDialer(0, 512, &fDmxColorOffset, 0, "color", OFX_UI_FONT_SMALL);
     dmxType = LED_DMX_RGB;
 //    gui->addNumberDialer("addr", 1, 512, dmxStartAddress, 3)->setDrawOutline(true);
     gui->addWidgetDown(dmxAddr);
+    gui->addWidgetDown(dmxColorOff);
 
     typesList = new ofxUIDropDownList(70, "RGB", dmxTypes, OFX_UI_FONT_SMALL);
 
@@ -110,7 +109,7 @@ void LED::setupDmxGui() {
     gui->autoSizeToFitWidgets();
     gui->setWidth(75);
 //    gui->setAutoUpdate(true);
-    gui->setPosition(ofGetWidth()/2-gui->getRect()->width/2, ofGetHeight()/2);
+    gui->setPosition(ofGetWidth()/2-gui->getRect()->width/2, ofGetHeight()/2-50);
     gui->disable();
 
     ofAddListener(gui->newGUIEvent, this, &LED::guiEvent);
@@ -123,10 +122,20 @@ void LED::showGui(bool bShow) {
     bShowGui ? gui->enable() : gui->disable();
 }
 
+void LED::setDmxAddress(unsigned int num) {
+    
+    dmxStartAddress = fDmxAddress = num;
+    setupDmxGui();
+}
+
 void LED::setDmxType(ledDmxType t) {
     dmxType = t;
     typesList->setName(dmxTypes[(int)dmxType]);
     typesList->activateToggle(dmxTypes[(int)dmxType]);
+}
+
+void LED::setDmxColorOffset(unsigned int offset){
+    dmxColorOffset = fDmxColorOffset = offset;
 }
 
 void LED::setDmxType(int t) {
@@ -157,30 +166,30 @@ void LED::getDmx(ofxDmx &dmx) {
     if (dmxColor != color) {
         switch (dmxType) {
             case LED_DMX_RGB:
-                dmx.setLevel(dmxStartAddress+0, color.r);
-                dmx.setLevel(dmxStartAddress+1, color.g);
-                dmx.setLevel(dmxStartAddress+2, color.b);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+0, color.r);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+1, color.g);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+2, color.b);
                 break;
             case LED_DMX_RGBA:
-                dmx.setLevel(dmxStartAddress+0, color.r);
-                dmx.setLevel(dmxStartAddress+1, color.g);
-                dmx.setLevel(dmxStartAddress+2, color.b);
-                dmx.setLevel(dmxStartAddress+3, color.a);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+0, color.r);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+1, color.g);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+2, color.b);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+3, color.a);
                 break;
             case LED_DMX_ARGB:
-                dmx.setLevel(dmxStartAddress+0, color.a);
-                dmx.setLevel(dmxStartAddress+1, color.r);
-                dmx.setLevel(dmxStartAddress+2, color.g);
-                dmx.setLevel(dmxStartAddress+3, color.b);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+0, color.a);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+1, color.r);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+2, color.g);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+3, color.b);
                 break;
             case LED_DMX_RGBW:
-                dmx.setLevel(dmxStartAddress+0, color.r);
-                dmx.setLevel(dmxStartAddress+1, color.g);
-                dmx.setLevel(dmxStartAddress+2, color.b);
-                dmx.setLevel(dmxStartAddress+3, 0);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+0, color.r);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+1, color.g);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+2, color.b);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+3, 0);
                 break;
             case LED_DMX_W:
-                dmx.setLevel(dmxStartAddress+0, ADSRvalue);
+                dmx.setLevel(dmxStartAddress+dmxColorOffset+0, ADSRvalue);
                 break;
 
             default:
@@ -226,5 +235,7 @@ void LED::guiEvent(ofxUIEventArgs &e){
     else if(e.widget == dmxAddr) {
         dmxStartAddress = dmxAddr->getValue();
 //        gui->set"led-"+ofToString(dmxStartAddress
+    } else if (dmxColorOff) {
+        dmxColorOffset = static_cast<unsigned int>(dmxColorOff->getValue());
     }
 }

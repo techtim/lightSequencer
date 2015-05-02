@@ -207,17 +207,20 @@ void Sequencer::draw()
     if (midiActive) {
         ofSetColor(150, 150, 150);
         ofRect(x-mSpace, y-mSpace, (cellSize + mSpace) * columns+mSpace, (cellSize + mSpace) * rows+mSpace);
-        for (int i=0; i < rows * columns; i++) {
-            midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, leds[i].isSelected ? 127 : 0);
-        }
 
-        if(ofGetFrameNum()%2 == 0) {
-            midiOut.sendControlChange(midiChannel, midiActivationCC, 127);
 
-            midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep, 127);
-            currentStep == 0 ?
-            midiOut.sendControlChange(midiChannel, midiSeqStartCC+steps-1, leds[steps-1].isSelected ? 127 : 0) :
-            midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep-1, leds[currentStep-1].isSelected ? 127 : 0) ;
+        if (midiOut.isOpen()) {
+//        for (int i=0; i < rows * columns; i++) {
+//            midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, leds[i].isSelected ? 127 : 0);
+//        }
+
+            if(ofGetFrameNum()%2 == 0) {
+                midiOut.sendControlChange(midiChannel, midiActivationCC, 127);
+                midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep, 127);
+                currentStep == 0 ?
+                midiOut.sendControlChange(midiChannel, midiSeqStartCC+steps-1, leds[steps-1].isSelected ? 127 : 0) :
+                midiOut.sendControlChange(midiChannel, midiSeqStartCC+currentStep-1, leds[currentStep-1].isSelected ? 127 : 0) ;
+            }
         }
     }
     
@@ -266,10 +269,13 @@ void Sequencer::setupMidi(unsigned int midiSeqStart, unsigned int channel, unsig
     midiIn.closePort();
     midiOut.closePort();
     midiIn.removeListener(this);
-    midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
-    midiIn.ignoreTypes(false, false, false);
-    midiOut.openPort(midiOutPort);
-    midiIn.addListener(this);
+    if (midiInPort != 100){
+        midiIn.openPort(midiInPort); // opens a connection with the device at port 0 (default)
+        midiIn.ignoreTypes(false, false, false);
+        midiIn.addListener(this);
+    }
+
+    if (midiOutPort != 100) midiOut.openPort(midiOutPort);    
 
     midiActive = false;
     midiSeqStartCC = midiSeqStart;

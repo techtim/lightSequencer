@@ -32,20 +32,20 @@ public:
     }
 
     void setDmxAddress(unsigned int num);
+    void setDmxColorOffset(unsigned int offset);
     void setupDmxGui();
     void setEdit(bool _bedit);
     bool isEdit();
 
-    void getNumInChain() {
-        return numInChain;
-    }
-    
     void setDmxType(ledDmxType t);
     void setDmxType(int t);
     void getDmx(ofxDmx &dmx);
     
     void update();
-    
+
+    void getNumInChain() {
+        return numInChain;
+    }
     void position(int xL, int yL, int xR, int yR);
     bool isClicked(int x, int y);
     
@@ -53,6 +53,10 @@ public:
         isSelected = led.isSelected;
         numInChain = led.numInChain;
         color.set(led.color);
+        dmxStartAddress = led.dmxStartAddress;
+        dmxColorOffset = led.dmxColorOffset;
+        numRow = led.numRow;
+        numColumn = led.numColumn;
         //        color.setBrightness(0);
     }
     
@@ -76,6 +80,7 @@ public:
     
     ofxUISuperCanvas* gui;
     ofxUINumberDialer* dmxAddr;
+    ofxUINumberDialer* dmxColorOff;
     ofxUIDropDownList* typesList;
     
 	void guiEvent(ofxUIEventArgs &e);
@@ -85,9 +90,10 @@ public:
     bool bDmxSetup;
     bool bEdit;
 
-    unsigned int dmxStartAddress;
+    unsigned int dmxStartAddress, dmxColorOffset;
+    
     ledDmxType dmxType;
-    float fDmxAddress;
+    float fDmxAddress, fDmxColorOffset;
 };
 
 #endif

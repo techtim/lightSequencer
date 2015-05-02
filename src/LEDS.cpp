@@ -8,7 +8,8 @@ LEDS::LEDS()
 
 LEDS::~LEDS()
 {
-	delete [] leds;
+//	delete [] leds;
+    leds.clear();
 	delete [] bitmap;
 	delete [] bitmapChar;
 }
@@ -36,14 +37,17 @@ void LEDS::set(int col, int row, int cell, int x, int y, int spac, bool setAllWh
     yRight = y + rows * cellSize + (rows-1) * mSpace;
 
     region = ofRectangle(xLeft, yLeft, xRight-xLeft, yRight-yLeft);
-    
-	leds = new LED [columns * rows];
+
+
     ledLastClicked = -1; // mean no clicks made
 	bitmap = new ofColor [columns * rows];
 	bitmapChar = new unsigned char [columns * rows * 3];
-	
+
+    //	leds = new LED [columns * rows];
+    for (int i=0; i<columns*rows; i++) leds.push_back(LED());
+
 	if (setAllWhite) {
-		for (int i=0; i<columns*rows; i++)
+        for (int i=0; i<columns*rows; i++)
 			leds[i].color = ofColor(255.0f,255.0f,255.0f,255.0f);
 	}
 	matrixImg.allocate(columns, rows, OF_IMAGE_COLOR);
@@ -158,10 +162,10 @@ void LEDS::update()
     for (int i = 0; i < ledsNumber; i++)
         leds[i].update();
 
-    if (bChangedAddrMode && !inAddrMode) {
-        for (unsigned int i = 0; i < columns * rows; i++) leds[i].showGui(false);
-        bChangedAddrMode = false;
-    }
+//    if (bChangedAddrMode && !inAddrMode) {
+//        for (unsigned int i = 0; i < columns * rows; i++) leds[i].showGui(false);
+//        bChangedAddrMode = false;
+//    }
 }
 
 void LEDS::print(bool with_alpha)
@@ -174,7 +178,7 @@ void LEDS::print(bool with_alpha)
     float parallMove = parallH/sin(70.0f*PI/180)*cos(70.0f*PI/180);
     float parallStartX = xLeft+(parallW)*columns/4;
 
-    if (midiActive) {
+    if (midiActive && midiOut.isOpen()) {
         ofSetColor(150, 150, 150);
         ofRect(x-mSpace, y-mSpace, (cellSize + mSpace) * columns+mSpace, (cellSize + mSpace) * rows+mSpace);
 
@@ -183,8 +187,6 @@ void LEDS::print(bool with_alpha)
             midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, 127) :
             midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, 0);
         }
-//        for (int i=rows * columns; i<16; i++) midiOut.sendControlChange(midiChannel, i + midiSeqStartCC, 0);
-//        midiOut.sendControlChange(midiChannel, midiActivationCC, 127);
     } else {
 //        midiOut.sendControlChange(midiChannel, midiActivationCC, 0); try control from app
         ;; 
@@ -380,7 +382,8 @@ void LEDS::updateColor(ofColor newColor, ofColor inactColor)
 
 LED * LEDS::getByRowCol(int r, int c) {
     if (r*c > rows*columns-1) return NULL;
-    return (leds+r*columns+c);
+    vector <LED>::iterator it = leds.begin();
+    return &(*(it+r*columns+c));
 }
 
 ofColor * LEDS::getBitmap()
@@ -506,6 +509,10 @@ void LEDS::getChainBitmapChar(unsigned char * chainMap) {
     return chainMap;
 }
 
+vector<LED> & LEDS::getLeds() {
+    return leds;
+}
+
 void LEDS::setupMidi(unsigned int ident, unsigned int channel, unsigned int inPort, unsigned int outPort) {
     midiChannel = channel;
 	midiId = ident;
@@ -561,6 +568,7 @@ void LEDS::saveDmxConfig() {
             XML->setValue("row", (int)leds[i].numRow, 0);
             XML->setValue("column", (int)leds[i].numColumn, 0);
             XML->setValue("startAddress", (int)leds[i].dmxStartAddress, 0);
+            XML->setValue("colorOffset", (int)leds[i].dmxColorOffset, 0);
             XML->setValue("type", leds[i].dmxType, 0);
             XML->popTag();
         }
@@ -583,6 +591,7 @@ void LEDS::loadDmxConfig() {
         LED * l = getByRowCol(row, column);
         if (l != NULL) {  // check if not null
             l->setDmxAddress(XML->getValue("startAddress", 0, 0));
+            l->setDmxColorOffset(XML->getValue("colorOffset", 0, 0));
             l->setDmxType(XML->getValue("type", 0, 0));
         }
         

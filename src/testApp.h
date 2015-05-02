@@ -133,15 +133,6 @@ public:
 
     MotionControl motionControl;
     
-	// -- Color --
-	int hueSelect;
-	int saturSelect;
-	int valueSelect;
-	
-	ofColor * colorSelect;
-	ofColor * hueColor;
-	colorPicker * hueLine;
-	
 	// -- Matrix --
 	int matrixH, matrixW;
 	int matrixPosX, matrixPosY;
@@ -172,9 +163,6 @@ public:
     int clickIndex;
 	
     float width, height;
-
-	int bufferCounter;
-	int bufferSize;
 
 	int inputDeviceID;
 	int outputDeviceID;
@@ -273,7 +261,10 @@ public:
 
     ofxUILabelToggle* OscButton;
     ofxUILabelToggle* LedAddrMode;
+    ofxUILabelToggle* MotionEnable;
     ofxUILabelToggle* MidiSelect;
+
+    bool bMotionEnable;
 
 	//	--- BPM ---
 	int beatStartTime;

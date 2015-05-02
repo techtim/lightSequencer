@@ -49,6 +49,11 @@
 		3AAECB97191DACFD0095C0D0 /* OnsetDetectionFunction.h in Sources */ = {isa = PBXBuildFile; fileRef = 3AAECB4C191D9DF60095C0D0 /* OnsetDetectionFunction.h */; };
 		3AAECB98191DACFD0095C0D0 /* samplerate.h in Sources */ = {isa = PBXBuildFile; fileRef = 3AAECB4D191D9DF60095C0D0 /* samplerate.h */; };
 		3ABBDB531AD3F200005E9394 /* MotionControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3ABBDB511AD3F200005E9394 /* MotionControl.cpp */; };
+		3AD2176A1AE5C55D00B8D9F5 /* DmxInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD217681AE5C55D00B8D9F5 /* DmxInterface.cpp */; };
+		3AD217871AE5C6FF00B8D9F5 /* ofxDmxFtdi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD2176D1AE5C6FF00B8D9F5 /* ofxDmxFtdi.cpp */; };
+		3AD217881AE5C6FF00B8D9F5 /* libftd2xx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AD2177D1AE5C6FF00B8D9F5 /* libftd2xx.a */; };
+		3AD217891AE5C6FF00B8D9F5 /* libusb-1.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AD217861AE5C6FF00B8D9F5 /* libusb-1.0.a */; };
+		3AD217AB1AE6871800B8D9F5 /* WindowSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD217A91AE6871800B8D9F5 /* WindowSettings.cpp */; };
 		3AE02C3B19D6E6D5001DA516 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE02C2619D6E6D5001DA516 /* main.cpp */; };
 		3AE02C3C19D6E6D5001DA516 /* MainMenuController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3AE02C2819D6E6D5001DA516 /* MainMenuController.mm */; };
 		3AE02C3D19D6E6D5001DA516 /* testApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE02C2B19D6E6D5001DA516 /* testApp.cpp */; };
@@ -264,6 +269,18 @@
 		3AAECB8A191DA99C0095C0D0 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		3ABBDB511AD3F200005E9394 /* MotionControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MotionControl.cpp; sourceTree = "<group>"; };
 		3ABBDB521AD3F200005E9394 /* MotionControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MotionControl.h; sourceTree = "<group>"; };
+		3AD217681AE5C55D00B8D9F5 /* DmxInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DmxInterface.cpp; sourceTree = "<group>"; };
+		3AD217691AE5C55D00B8D9F5 /* DmxInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DmxInterface.h; sourceTree = "<group>"; };
+		3AD2176D1AE5C6FF00B8D9F5 /* ofxDmxFtdi.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ofxDmxFtdi.cpp; sourceTree = "<group>"; };
+		3AD2176E1AE5C6FF00B8D9F5 /* ofxDmxFtdi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxDmxFtdi.h; sourceTree = "<group>"; };
+		3AD217721AE5C6FF00B8D9F5 /* ftd2xx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ftd2xx.h; sourceTree = "<group>"; };
+		3AD217731AE5C6FF00B8D9F5 /* WinTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WinTypes.h; sourceTree = "<group>"; };
+		3AD2177D1AE5C6FF00B8D9F5 /* libftd2xx.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libftd2xx.a; sourceTree = "<group>"; };
+		3AD2177E1AE5C6FF00B8D9F5 /* libftd2xx.1.2.2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libftd2xx.1.2.2.dylib; sourceTree = "<group>"; };
+		3AD217811AE5C6FF00B8D9F5 /* libusb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libusb.h; sourceTree = "<group>"; };
+		3AD217861AE5C6FF00B8D9F5 /* libusb-1.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libusb-1.0.a"; sourceTree = "<group>"; };
+		3AD217A91AE6871800B8D9F5 /* WindowSettings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WindowSettings.cpp; sourceTree = "<group>"; };
+		3AD217AA1AE6871800B8D9F5 /* WindowSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindowSettings.h; sourceTree = "<group>"; };
 		3AE02C2619D6E6D5001DA516 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3AE02C2719D6E6D5001DA516 /* MainMenuController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainMenuController.h; sourceTree = "<group>"; };
 		3AE02C2819D6E6D5001DA516 /* MainMenuController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainMenuController.mm; sourceTree = "<group>"; };
@@ -435,10 +452,12 @@
 				E7F985F815E0DEA3003869B5 /* Accelerate.framework in Frameworks */,
 				E7E077E815D3B6510020DFD4 /* QTKit.framework in Frameworks */,
 				E4EB6799138ADC1D00A09F29 /* GLUT.framework in Frameworks */,
+				3AD217891AE5C6FF00B8D9F5 /* libusb-1.0.a in Frameworks */,
 				E4328149138ABC9F0047C5CB /* openFrameworksDebug.a in Frameworks */,
 				E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */,
 				E45BE97C0E8CC7DD009D7055 /* ApplicationServices.framework in Frameworks */,
 				E45BE97D0E8CC7DD009D7055 /* AudioToolbox.framework in Frameworks */,
+				3AD217881AE5C6FF00B8D9F5 /* libftd2xx.a in Frameworks */,
 				E45BE97E0E8CC7DD009D7055 /* Carbon.framework in Frameworks */,
 				E45BE97F0E8CC7DD009D7055 /* CoreAudio.framework in Frameworks */,
 				E45BE9800E8CC7DD009D7055 /* CoreFoundation.framework in Frameworks */,
@@ -643,6 +662,103 @@
 			path = ../../../addons/ofxSoundStream/src;
 			sourceTree = "<group>";
 		};
+		3AD2176B1AE5C6FF00B8D9F5 /* ofxDmxFTDI */ = {
+			isa = PBXGroup;
+			children = (
+				3AD2176C1AE5C6FF00B8D9F5 /* src */,
+				3AD2176F1AE5C6FF00B8D9F5 /* libs */,
+			);
+			name = ofxDmxFTDI;
+			sourceTree = "<group>";
+		};
+		3AD2176C1AE5C6FF00B8D9F5 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				3AD2176D1AE5C6FF00B8D9F5 /* ofxDmxFtdi.cpp */,
+				3AD2176E1AE5C6FF00B8D9F5 /* ofxDmxFtdi.h */,
+			);
+			name = src;
+			path = ../../../addons/ofxDmxFTDI/src;
+			sourceTree = "<group>";
+		};
+		3AD2176F1AE5C6FF00B8D9F5 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217701AE5C6FF00B8D9F5 /* libftd2xx */,
+				3AD2177E1AE5C6FF00B8D9F5 /* libftd2xx.1.2.2.dylib */,
+				3AD2177F1AE5C6FF00B8D9F5 /* libusbx */,
+			);
+			name = libs;
+			path = ../../../addons/ofxDmxFTDI/libs;
+			sourceTree = "<group>";
+		};
+		3AD217701AE5C6FF00B8D9F5 /* libftd2xx */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217711AE5C6FF00B8D9F5 /* include */,
+				3AD217741AE5C6FF00B8D9F5 /* lib */,
+			);
+			path = libftd2xx;
+			sourceTree = "<group>";
+		};
+		3AD217711AE5C6FF00B8D9F5 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217721AE5C6FF00B8D9F5 /* ftd2xx.h */,
+				3AD217731AE5C6FF00B8D9F5 /* WinTypes.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		3AD217741AE5C6FF00B8D9F5 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				3AD2177C1AE5C6FF00B8D9F5 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		3AD2177C1AE5C6FF00B8D9F5 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				3AD2177D1AE5C6FF00B8D9F5 /* libftd2xx.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
+		3AD2177F1AE5C6FF00B8D9F5 /* libusbx */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217801AE5C6FF00B8D9F5 /* include */,
+				3AD217821AE5C6FF00B8D9F5 /* lib */,
+			);
+			path = libusbx;
+			sourceTree = "<group>";
+		};
+		3AD217801AE5C6FF00B8D9F5 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217811AE5C6FF00B8D9F5 /* libusb.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		3AD217821AE5C6FF00B8D9F5 /* lib */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217851AE5C6FF00B8D9F5 /* osx */,
+			);
+			path = lib;
+			sourceTree = "<group>";
+		};
+		3AD217851AE5C6FF00B8D9F5 /* osx */ = {
+			isa = PBXGroup;
+			children = (
+				3AD217861AE5C6FF00B8D9F5 /* libusb-1.0.a */,
+			);
+			path = osx;
+			sourceTree = "<group>";
+		};
 		3AE02C4519D6E70B001DA516 /* Generator */ = {
 			isa = PBXGroup;
 			children = (
@@ -735,6 +851,7 @@
 				3A2CE8AD1AA02557006F6EAC /* ofxMidi */,
 				E6053AB7FEC63D5F83825B88 /* ofxOsc */,
 				1F4FB5C423662B96ADFDCC0B /* ofxXmlSettings */,
+				3AD2176B1AE5C6FF00B8D9F5 /* ofxDmxFTDI */,
 				9C10541A7618D99B3938950F /* ofxDmx */,
 				A492CE86424AB8905550BFD8 /* ofxUI */,
 			);
@@ -950,6 +1067,10 @@
 				3AE02C2919D6E6D5001DA516 /* Config.h */,
 				3AE02C2A19D6E6D5001DA516 /* testApp.h */,
 				3AE02C2B19D6E6D5001DA516 /* testApp.cpp */,
+				3AD217A91AE6871800B8D9F5 /* WindowSettings.cpp */,
+				3AD217AA1AE6871800B8D9F5 /* WindowSettings.h */,
+				3AD217681AE5C55D00B8D9F5 /* DmxInterface.cpp */,
+				3AD217691AE5C55D00B8D9F5 /* DmxInterface.h */,
 				3AE02C2C19D6E6D5001DA516 /* bitmapMixer.cpp */,
 				3AE02C2D19D6E6D5001DA516 /* bitmapMixer.h */,
 				3ABBDB511AD3F200005E9394 /* MotionControl.cpp */,
@@ -1151,6 +1272,7 @@
 				3AE02C4119D6E6D5001DA516 /* tcpControl.cpp in Sources */,
 				26874B150C8535AEA0F24C8C /* ofxUIImageSlider.cpp in Sources */,
 				FB8AA9FA6535767BE31806BC /* ofxUIImageToggle.cpp in Sources */,
+				3AD217AB1AE6871800B8D9F5 /* WindowSettings.cpp in Sources */,
 				7C3DC84C9BFCBD2866DB2B6C /* ofxUILabel.cpp in Sources */,
 				3A2CE8E11AA02557006F6EAC /* ofxMidiOut.cpp in Sources */,
 				FFD1EBFCA24DFB4E4427B4FE /* ofxUILabelButton.cpp in Sources */,
@@ -1165,6 +1287,7 @@
 				E3D59A6B55F05669B3FBF8BD /* ofxUINumberDialer.cpp in Sources */,
 				D60E54E7FD6E19BC8636E0D2 /* ofxUIRadio.cpp in Sources */,
 				1587708E3CAC72997E43504E /* ofxUIRangeSlider.cpp in Sources */,
+				3AD2176A1AE5C55D00B8D9F5 /* DmxInterface.cpp in Sources */,
 				3AE02C5919D6E71C001DA516 /* colorPicker.cpp in Sources */,
 				59C5F2F5D7254C33C00F97CB /* ofxUIRectangle.cpp in Sources */,
 				FE0F1DB69ACCD163E9DA2A15 /* ofxUIRotarySlider.cpp in Sources */,
@@ -1200,6 +1323,7 @@
 				3AAECB94191DACEA0095C0D0 /* BTrack_mod.h in Sources */,
 				3AAECB95191DACFD0095C0D0 /* fftw3.h in Sources */,
 				3AAECB96191DACFD0095C0D0 /* OnsetDetectionFunction.cpp in Sources */,
+				3AD217871AE5C6FF00B8D9F5 /* ofxDmxFtdi.cpp in Sources */,
 				3AE02C3C19D6E6D5001DA516 /* MainMenuController.mm in Sources */,
 				3AE02C5419D6E71C001DA516 /* Generator.cpp in Sources */,
 				3AE02C5819D6E71C001DA516 /* Sequencer.cpp in Sources */,
@@ -1339,6 +1463,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_MODEL_TUNING = NONE;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
@@ -1433,10 +1558,12 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_52)",
 					"$(PROJECT_DIR)",
+					/Users/techtim/Programming/OF/of8/addons/ofxDmxFTDI/libs/libftd2xx/lib/osx,
+					/Users/techtim/Programming/OF/of8/addons/ofxDmxFTDI/libs/libusbx/lib/osx,
 				);
 				PRODUCT_NAME = lightSequencerDmxDebug;
 				SDKROOT = macosx10.9;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "../../../addons/ofxDmxFTDI/libs/libftd2xx/include/ ../../../addons/ofxDmxFTDI/libs/libusbx/include/";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1453,6 +1580,7 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../libs/glut/lib/osx\"";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.cpp;
 				GCC_MODEL_TUNING = NONE;
 				HEADER_SEARCH_PATHS = (
 					"$(OF_CORE_HEADERS)",
@@ -1547,10 +1675,12 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_50)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_51)",
 					"$(PROJECT_DIR)",
+					/Users/techtim/Programming/OF/of8/addons/ofxDmxFTDI/libs/libftd2xx/lib/osx,
+					/Users/techtim/Programming/OF/of8/addons/ofxDmxFTDI/libs/libusbx/lib/osx,
 				);
 				PRODUCT_NAME = lightSequencerDmx;
 				SDKROOT = macosx10.9;
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "../../../addons/ofxDmxFTDI/libs/libftd2xx/include/ ../../../addons/ofxDmxFTDI/libs/libusbx/include/";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

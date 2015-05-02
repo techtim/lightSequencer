@@ -63,6 +63,7 @@ void bpmControl::draw(){
 		ofSetHexColor(0xFFFFFF);
 		ofCircle(leftX+width/4+50, leftY + 22, 10);
 	}
+    liveAudioAnalysis.drawBeatTimesSeconds(liveAudioAnalysis.aubioOnsetDetectionVector);
 }
 
 bool bpmControl::isClicked(int x, int y){
